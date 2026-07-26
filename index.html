@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>C# · ghid vizual</title>
+  <!-- Font & base style -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600&display=swap" rel="stylesheet" />
+  <style>
+    /* ----- reset & base ----- */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', 'Segoe UI', sans-serif;
+      line-height: 1.6;
+      color: #2c2a2f;
+      background-color: #F7ECE1;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    a, button, .nav-link, .bar, .highlight, .card, .intro ol li {
+      transition: all 0.25s ease;
+    }
+
+    /* ----- header & navigation ----- */
+    header {
+      background: linear-gradient(145deg, #CAC4CE 0%, #8D86C9 100%);
+      box-shadow: 0 8px 24px rgba(114, 90, 193, 0.15);
+      border-bottom: 1px solid rgba(255, 238, 221, 0.4);
+      backdrop-filter: blur(2px);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .navbar {
+      min-height: 76px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 32px;
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+
+    .nav-branding {
+      font-size: 2.2rem;
+      font-weight: 600;
+      letter-spacing: 1px;
+      color: #F7ECE1;
+      text-shadow: 0 2px 8px rgba(114, 90, 193, 0.3);
+      transition: 0.3s;
+      text-decoration: none;
+      position: relative;
+    }
+    .nav-branding::after {
+      content: '';
+      position: absolute;
+      bottom: 4px;
+      left: 0;
+      width: 0;
+      height: 3px;
+      background: #FFEEDD;
+      border-radius: 4px;
+      transition: width 0.4s ease;
+    }
+    .nav-branding:hover::after {
+      width: 80%;
+    }
+    .nav-branding:hover {
+      transform: scale(1.02);
+      color: #ffffff;
+    }
+
+    .nav-menu {
+      display: flex;
+      align-items: center;
+      gap: 40px;
+      list-style: none;
+    }
+
+    .nav-link {
+      color: #F7ECE1;
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 1.05rem;
+      padding: 6px 0;
+      position: relative;
+      letter-spacing: 0.3px;
+      border-bottom: 2px solid transparent;
+    }
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: #FFEEDD;
+      border-radius: 4px;
+      transition: width 0.35s ease;
+    }
+    .nav-link:hover {
+      color: #ffffff;
+    }
+    .nav-link:hover::after {
+      width: 100%;
+    }
+
+    /* ----- hamburger (animated) ----- */
+    .hamburger {
+      display: none;
+      cursor: pointer;
+      flex-direction: column;
+      gap: 5px;
+      padding: 6px 4px;
+    }
+    .bar {
+      display: block;
+      width: 28px;
+      height: 3px;
+      background: #F7ECE1;
+      border-radius: 6px;
+      transition: all 0.3s ease-in-out;
+      transform-origin: center;
+    }
+
+    @media (max-width: 768px) {
+      .hamburger {
+        display: flex;
+      }
+      .nav-menu {
+        position: fixed;
+        left: -100%;
+        top: 76px;
+        flex-direction: column;
+        background: linear-gradient(160deg, #CAC4CE 0%, #8D86C9 100%);
+        width: 100%;
+        padding: 28px 0;
+        gap: 24px;
+        box-shadow: 0 18px 40px rgba(114, 90, 193, 0.2);
+        transition: 0.35s cubic-bezier(0.23, 1, 0.32, 1);
+        backdrop-filter: blur(6px);
+        border-top: 1px solid rgba(255, 238, 221, 0.25);
+      }
+      .nav-menu.active {
+        left: 0;
+      }
+      .nav-item {
+        margin: 0;
+      }
+      .nav-link {
+        font-size: 1.2rem;
+        padding: 6px 0;
+      }
+      .hamburger.active .bar:nth-child(1) {
+        transform: translateY(8px) rotate(45deg);
+      }
+      .hamburger.active .bar:nth-child(2) {
+        opacity: 0;
+        transform: scaleX(0);
+      }
+      .hamburger.active .bar:nth-child(3) {
+        transform: translateY(-8px) rotate(-45deg);
+      }
+    }
+
+    /* ----- container & cards ----- */
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 32px 24px;
+    }
+
+    .intro {
+      background: linear-gradient(135deg, #FFEEDD 0%, #F7ECE1 100%);
+      padding: 24px 0 40px;
+      border-bottom: 1px solid rgba(202, 196, 206, 0.3);
+      animation: fadeSlide 0.9s ease forwards;
+    }
+
+    @keyframes fadeSlide {
+      0% { opacity: 0; transform: translateY(20px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+
+    .intro h1 {
+      font-size: 2rem;
+      color: #725AC1;
+      margin: 32px 0 16px 0;
+      padding-bottom: 10px;
+      border-bottom: 3px solid #8D86C9;
+      display: inline-block;
+      letter-spacing: -0.3px;
+      position: relative;
+      opacity: 0;
+      animation: slideInLeft 0.6s ease forwards;
+    }
+    
+    .intro h1:nth-child(1) { animation-delay: 0.2s; }
+    .intro h1:nth-child(3) { animation-delay: 0.4s; }
+    .intro h1:nth-child(5) { animation-delay: 0.6s; }
+
+    @keyframes slideInLeft {
+      0% { opacity: 0; transform: translateX(-30px); }
+      100% { opacity: 1; transform: translateX(0); }
+    }
+    
+    .intro h1:first-child {
+      margin-top: 0;
+    }
+    .intro h1::before {
+      content: '◆ ';
+      color: #CAC4CE;
+      font-size: 1.6rem;
+      opacity: 0.7;
+    }
+
+    .intro p {
+      font-size: 1.08rem;
+      color: #3d3a42;
+      margin-bottom: 20px;
+      text-align: justify;
+      line-height: 1.7;
+      background: rgba(255, 238, 221, 0.5);
+      padding: 6px 14px;
+      border-radius: 20px;
+      backdrop-filter: blur(2px);
+      opacity: 0;
+      animation: fadeInUp 0.7s ease forwards;
+    }
+    
+    .intro p:nth-of-type(1) { animation-delay: 0.3s; }
+    .intro p:nth-of-type(2) { animation-delay: 0.7s; }
+    .intro p:nth-of-type(3) { animation-delay: 1.0s; }
+
+    @keyframes fadeInUp {
+      0% { opacity: 0; transform: translateY(20px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+
+    .intro ol {
+      background: rgba(255, 238, 221, 0.7);
+      backdrop-filter: blur(8px);
+      padding: 28px 28px 28px 48px;
+      border-radius: 28px;
+      box-shadow: 0 8px 28px rgba(141, 134, 201, 0.12);
+      margin: 20px 0 28px;
+      border: 1px solid rgba(202, 196, 206, 0.3);
+      opacity: 0;
+      animation: scaleIn 0.8s ease forwards;
+    }
+    
+    .intro ol:nth-of-type(1) { animation-delay: 0.5s; }
+    .intro ol:nth-of-type(2) { animation-delay: 0.9s; }
+    
+    @keyframes scaleIn {
+      0% { opacity: 0; transform: scale(0.95); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+
+    .intro ol:hover {
+      box-shadow: 0 12px 36px rgba(114, 90, 193, 0.08);
+      transform: scale(1.003);
+    }
+
+    .intro ol li {
+      margin-bottom: 14px;
+      color: #3d3a42;
+      font-size: 1.05rem;
+      line-height: 1.7;
+      padding-left: 6px;
+      position: relative;
+      list-style-type: '✦ ';
+      opacity: 0;
+      animation: fadeInRight 0.5s ease forwards;
+    }
+    
+    .intro ol:nth-of-type(1) li:nth-child(1) { animation-delay: 0.7s; }
+    .intro ol:nth-of-type(1) li:nth-child(2) { animation-delay: 0.9s; }
+    .intro ol:nth-of-type(2) li:nth-child(1) { animation-delay: 1.1s; }
+    .intro ol:nth-of-type(2) li:nth-child(2) { animation-delay: 1.3s; }
+    .intro ol:nth-of-type(2) li:nth-child(3) { animation-delay: 1.5s; }
+    .intro ol:nth-of-type(2) li:nth-child(4) { animation-delay: 1.7s; }
+    .intro ol:nth-of-type(2) li:nth-child(5) { animation-delay: 1.9s; }
+
+    @keyframes fadeInRight {
+      0% { opacity: 0; transform: translateX(20px); }
+      100% { opacity: 1; transform: translateX(0); }
+    }
+    
+    .intro ol li::marker {
+      color: #8D86C9;
+      font-size: 1.2rem;
+    }
+    .intro ol li:last-child {
+      margin-bottom: 0;
+    }
+
+    .highlight {
+      background: linear-gradient(120deg, #CAC4CE 0%, #8D86C9 100%);
+      background-size: 200% 100%;
+      color: #F7ECE1;
+      padding: 2px 12px;
+      border-radius: 40px;
+      font-weight: 600;
+      display: inline-block;
+      letter-spacing: 0.3px;
+      animation: shimmer 4s infinite alternate;
+      box-shadow: 0 2px 6px rgba(114, 90, 193, 0.1);
+    }
+    
+    @keyframes shimmer {
+      0% { background-position: 0% 50%; }
+      100% { background-position: 100% 50%; }
+    }
+
+    .highlight:hover {
+      transform: scale(1.04) rotate(-0.5deg);
+      background: #725AC1;
+      color: #FFEEDD;
+    }
+
+    .main-section {
+      background: #FFEEDD;
+      padding: 48px 0 64px;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .main-section::before {
+      content: '';
+      position: absolute;
+      top: -60px;
+      right: -60px;
+      width: 300px;
+      height: 300px;
+      background: radial-gradient(circle, rgba(202, 196, 206, 0.2) 0%, transparent 70%);
+      border-radius: 50%;
+      animation: floatBlob 12s infinite alternate ease-in-out;
+      pointer-events: none;
+    }
+    
+    .main-section::after {
+      content: '';
+      position: absolute;
+      bottom: -40px;
+      left: -40px;
+      width: 240px;
+      height: 240px;
+      background: radial-gradient(circle, rgba(141, 134, 201, 0.15) 0%, transparent 70%);
+      border-radius: 50%;
+      animation: floatBlob 15s infinite alternate-reverse ease-in-out;
+      pointer-events: none;
+    }
+    
+    @keyframes floatBlob {
+      0% { transform: translate(0, 0) scale(1); }
+      100% { transform: translate(40px, 30px) scale(1.2); }
+    }
+
+    .main-section h2 {
+      font-size: 2.2rem;
+      color: #725AC1;
+      margin-bottom: 28px;
+      text-align: center;
+      position: relative;
+      letter-spacing: -0.5px;
+      opacity: 0;
+      animation: bounceIn 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+      animation-delay: 0.2s;
+    }
+    
+    @keyframes bounceIn {
+      0% { opacity: 0; transform: scale(0.3); }
+      50% { opacity: 1; transform: scale(1.05); }
+      70% { transform: scale(0.9); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+    
+    .main-section h2::after {
+      content: '';
+      display: block;
+      width: 120px;
+      height: 5px;
+      background: linear-gradient(90deg, #CAC4CE, #8D86C9, #725AC1);
+      margin: 12px auto 0;
+      border-radius: 12px;
+    }
+
+    .card-soft {
+      background: rgba(247, 236, 225, 0.6);
+      backdrop-filter: blur(6px);
+      padding: 20px 28px;
+      border-radius: 48px;
+      margin-top: 32px;
+      border: 1px solid rgba(202, 196, 206, 0.25);
+      transition: transform 0.3s ease, background 0.3s ease, border-color 0.3s ease;
+      box-shadow: 0 8px 24px rgba(141, 134, 201, 0.04);
+      opacity: 0;
+      animation: fadeInUp 0.7s ease forwards;
+      animation-delay: 0.5s;
+    }
+    
+    .card-soft:hover {
+      transform: translateY(-6px);
+      background: rgba(255, 238, 221, 0.8);
+      border-color: #CAC4CE;
+    }
+
+    /* ===== CONTAINERE PAȘI - MĂRITE PE ECRANE LATE ===== */
+    .pas-container {
+      background: rgba(255, 238, 221, 0.65);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(202, 196, 206, 0.35);
+      border-radius: 32px;
+      padding: 24px 28px;
+      margin: 24px auto 0;
+      max-width: 680px; /* valoarea implicită pe mobil/tabletă */
+      box-shadow: 0 12px 28px rgba(114, 90, 193, 0.06);
+      
+      opacity: 0;
+      transform: translateY(30px);
+      
+      transition: background 0.4s ease,
+                  border-color 0.4s ease,
+                  box-shadow 0.4s ease,
+                  transform 0.4s ease;
+    }
+    
+    /* Pe ecrane late (peste 900px) containerele devin mai mari */
+    @media (min-width: 900px) {
+      .pas-container {
+        max-width: 780px; /* mai lat */
+        padding: 28px 32px;
+      }
+    }
+    
+    /* Clasa adăugată de JS - fără tranziție pe opacity/transform */
+    .pas-container.reveal {
+      opacity: 1;
+      transform: translateY(0);
+      transition: opacity 0s, 
+                  transform 0s,
+                  background 0.4s ease,
+                  border-color 0.4s ease,
+                  box-shadow 0.4s ease;
+    }
+    
+    .pas-container.reveal:hover {
+      background: rgba(255, 238, 221, 0.85);
+      border-color: #CAC4CE;
+      box-shadow: 0 18px 38px rgba(114, 90, 193, 0.12);
+      transform: translateY(-4px);
+    }
+    
+    /* Imagine responsive - mărită pe ecrane late */
+    .pas-container img {
+      width: 100%;
+      max-width: 100%;
+      height: auto;
+      display: block;
+      margin: 20px 0 10px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(114, 90, 193, 0.1);
+      /* Eliminăm orice animație de hover care ar putea cauza glitch-uri */
+      transition: none;
+    }
+    
+    /* Pe ecrane late, imaginile pot fi puțin mai mari fără a afecta layout-ul */
+    @media (min-width: 900px) {
+      .pas-container img {
+        margin: 24px 0 16px;
+        border-radius: 16px;
+        box-shadow: 0 6px 18px rgba(114, 90, 193, 0.12);
+      }
+    }
+
+    .pas-container h3 {
+      font-size: 1.5rem;
+      color: #725AC1;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 600;
+    }
+
+    .pas-container p {
+      font-style: normal;
+      text-align: left;
+      background: transparent;
+      padding: 0;
+      box-shadow: none;
+      animation: none;
+      max-width: 100%;
+      font-size: 1.05rem;
+      color: #3d3a42;
+      margin: 0;
+      line-height: 1.6;
+      border: none;
+      border-radius: 0;
+      backdrop-filter: none;
+    }
+
+    /* ===== BUTON „Creează primul tău cod” ===== */
+    .cta-button-wrapper {
+      text-align: center;
+      margin-top: 36px;
+      opacity: 0;
+      animation: fadeInUp 0.8s ease forwards;
+      animation-delay: 0.8s;
+    }
+
+    .cta-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 16px 36px;
+      background: linear-gradient(135deg, #725AC1, #8D86C9);
+      color: #F7ECE1;
+      text-decoration: none;
+      border-radius: 60px;
+      font-size: 1.15rem;
+      font-weight: 600;
+      letter-spacing: 0.4px;
+      box-shadow: 0 10px 28px rgba(114, 90, 193, 0.25);
+      border: 2px solid transparent;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cta-button::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: left 0.5s ease;
+    }
+
+    .cta-button:hover {
+      background: linear-gradient(135deg, #8D86C9, #725AC1);
+      box-shadow: 0 14px 38px rgba(114, 90, 193, 0.4);
+      transform: translateY(-3px) scale(1.03);
+      border-color: #CAC4CE;
+    }
+
+    .cta-button:hover::before {
+      left: 100%;
+    }
+
+    .cta-button .cta-arrow {
+      font-size: 1.3rem;
+      transition: transform 0.3s ease;
+    }
+
+    .cta-button:hover .cta-arrow {
+      transform: translateX(6px);
+    }
+
+    .cta-subtitle {
+      margin-top: 10px;
+      font-size: 0.9rem;
+      color: #8D86C9;
+      opacity: 0.8;
+    }
+
+    /* ----- responsive adjustments ----- */
+    @media (max-width: 600px) {
+      .navbar { padding: 0 18px; }
+      .nav-branding { font-size: 1.8rem; }
+      .container { padding: 20px 16px; }
+      .intro h1 { font-size: 1.6rem; }
+      .intro ol { padding: 20px 20px 20px 32px; }
+      .intro ol li { font-size: 0.98rem; }
+      .main-section h2 { font-size: 1.8rem; }
+      .pas-container {
+        padding: 18px 20px;
+        margin: 20px 14px 0;
+      }
+      .pas-container img {
+        margin: 15px 0 8px;
+        border-radius: 8px;
+      }
+      .cta-button {
+        padding: 14px 28px;
+        font-size: 1rem;
+      }
+    }
+
+    /* ----- all links & accessibility ----- */
+    a:focus-visible, button:focus-visible {
+      outline: 3px solid #8D86C9;
+      outline-offset: 4px;
+      border-radius: 8px;
+    }
+
+  </style>
+</head>
+<body>
+  <header>
+    <nav class="navbar">
+      <a href="index.html" class="nav-branding">C#</a>
+      <ul class="nav-menu">
+        <li class="nav-item"><a href="index.html" class="nav-link">Acasă</a></li>
+        <li class="nav-item"><a href="capitole.html" class="nav-link">Capitole</a></li>
+        <li class="nav-item"><a href="compilator.html" class="nav-link">Compilator</a></li>
+      </ul>
+      <div class="hamburger" aria-label="meniu" role="button" tabindex="0">
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="intro">
+      <div class="container">
+        <h1>Ce este C#?</h1>
+        <p>C# este un limbaj de programare modern, orientat pe obiecte (OOP) și puternic tipizat. Are o sintaxă clară și curată, derivată din familia de limbaje C, fiind foarte similar ca structură cu Java sau C++. A fost conceput de la bun început pentru a rula pe platforma .NET, un mediu de execuție uriaș care îi oferă mii de biblioteci predefinite, făcând scrierea codului mult mai rapidă și mai sigură (de exemplu, gestionează automat memoria prin procesul de Garbage Collection).</p>
+        
+        <h1>De cine și când a fost creat?</h1>
+        <ol>
+          <li><strong>Creator:</strong> Limbajul a fost creat de compania Microsoft. Echipa de dezvoltare a fost condusă de inginerul danez <span class="highlight">Anders Hejlsberg</span>, o figură legendară în programare (el fiind și creatorul Turbo Pascal, Delphi, iar mai târziu, al TypeScript-ului).</li>
+          <li><strong>Lansare:</strong> Dezvoltarea sa a început la finalul anilor '90 sub numele de cod <span class="highlight">„Cool”</span> (C-like Object Oriented Language). A fost redenumit în C# și anunțat oficial în anul 2000, fiind lansat publicului larg în 2002, odată cu prima versiune a platformei .NET.</li>
+        </ol>
+        
+        <h1>Pentru ce este utilizat?</h1>
+        <p>C# este extrem de versatil (este un limbaj de tip general-purpose), ceea ce înseamnă că poți construi aproape orice cu el:</p>
+        <ol>
+          <li><strong>Dezvoltare de Jocuri (Gamedev):</strong> Este limbajul principal folosit în <span class="highlight">Unity</span>, cel mai popular motor pentru crearea de jocuri video 2D, 3D, AR (Realitate Augmentată) și VR (Realitate Virtuală), atât pentru PC/console, cât și pentru mobile.</li>
+          <li><strong>Aplicații Web (Backend):</strong> Prin intermediul framework-ului <span class="highlight">ASP.NET Core</span>, C# este folosit la scară largă pentru a construi site-uri web extrem de rapide, sigure și scalabile, dar și API-uri (partea din spate a unei aplicații).</li>
+          <li><strong>Aplicații Desktop pentru Windows:</strong> Rămâne limbajul standard pentru dezvoltarea de software pe sistemele de operare Windows (folosind tehnologii precum WPF, Windows Forms sau, mai nou, WinUI).</li>
+          <li><strong>Aplicații Mobile (Cross-platform):</strong> Cu ajutorul tehnologiilor precum <span class="highlight">.NET MAUI</span> (fostul Xamarin), poți scrie cod o singură dată în C# și îl poți rula atât ca aplicație nativă de Android, cât și de iOS.</li>
+          <li><strong>Software de Enterprise și Cloud:</strong> Este o alegere de top pentru corporațiile mari care au nevoie de sisteme de business complexe, fiabile și perfect integrate cu serviciile cloud (în special cu <span class="highlight">Microsoft Azure</span>).</li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="main-section">
+      <div class="container">
+        <h2>Ce ne trebuie pentru a utiliza C#?</h2>
+        <div class="card-soft">
+          <p style="font-style: normal; text-align: left; background: transparent; padding: 0; box-shadow: none; max-width: 100%;">
+            ⚡ Un editor (Visual Studio, VS Code, Rider) &bull; .NET SDK &bull; curaj și creativitate.
+          </p>
+        </div>
+        
+        <div class="pas-container" id="pas1">
+          <h3>Pasul 1</h3>
+          <p>Descarcă și instalează .NET SDK de pe site-ul oficial Microsoft. Asigură-te că alegi versiunea potrivită pentru sistemul tău de operare.</p>
+          <img src="Video Project.gif" alt="Instalare .NET SDK" loading="lazy">
+        </div>
+        
+        <div class="pas-container" id="pas2">
+          <h3>Pasul 2</h3>
+          <p>Alege un editor de cod. Recomand Visual Studio Community (gratuit) sau Visual Studio Code cu extensia C# pentru o experiență completă.</p>
+          <img src="Video Project 1.gif" alt="Alegere editor cod" loading="lazy">
+        </div>
+        
+        <div class="pas-container" id="pas3">
+          <h3>Pasul 3</h3>
+          <p>Deschide terminalul și tastează <code style="background: #CAC4CE30; padding: 2px 10px; border-radius: 20px;">dotnet new console</code> pentru a crea primul tău proiect C#. Apoi scrie <code style="background: #CAC4CE30; padding: 2px 10px; border-radius: 20px;">dotnet run</code> pentru a-l executa.</p>
+          <img src="Video Project 8.gif" alt="Rulare proiect C#" loading="lazy">
+        </div>
+
+        <!-- Buton CTA către primul capitol -->
+        <div class="cta-button-wrapper">
+          <a href="capitole/1.html" class="cta-button">
+            🚀 Creează primul tău cod
+            <span class="cta-arrow">→</span>
+          </a>
+          <p class="cta-subtitle">Începe Capitolul 1 – Introducere în C# și .NET</p>
+        </div>
+
+      </div>
+    </section>
+  </main>
+
+  <script>
+    (function() {
+      const hamburger = document.querySelector('.hamburger');
+      const navMenu = document.querySelector('.nav-menu');
+
+      function toggleMenu() {
+        hamburger.classList.toggle('active');
+        navMenu.classList.toggle('active');
+      }
+
+      hamburger.addEventListener('click', toggleMenu);
+      
+      document.querySelectorAll('.nav-link').forEach(link => {
+        link.addEventListener('click', () => {
+          if (navMenu.classList.contains('active')) {
+            hamburger.classList.remove('active');
+            navMenu.classList.remove('active');
+          }
+        });
+      });
+
+      document.addEventListener('click', (e) => {
+        const isMenuOpen = navMenu.classList.contains('active');
+        if (isMenuOpen && !e.target.closest('nav') && !e.target.closest('.hamburger')) {
+          hamburger.classList.remove('active');
+          navMenu.classList.remove('active');
+        }
+      });
+
+      hamburger.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          toggleMenu();
+        }
+      });
+
+      /* ===== SISTEM REVEAL - FĂRĂ GLITCH-URI ===== */
+      const revealedContainers = new Set();
+
+      function revealContainers() {
+        const containers = document.querySelectorAll('.pas-container');
+        const windowHeight = window.innerHeight;
+        
+        containers.forEach(container => {
+          const rect = container.getBoundingClientRect();
+          
+          if (rect.top < windowHeight - 100 && !revealedContainers.has(container)) {
+            revealedContainers.add(container);
+            // Forțăm un repaint înainte de a adăuga clasa
+            container.style.willChange = 'opacity, transform';
+            requestAnimationFrame(() => {
+              requestAnimationFrame(() => {
+                container.classList.add('reveal');
+                container.style.willChange = 'auto';
+              });
+            });
+          }
+        });
+      }
+
+      window.addEventListener('scroll', revealContainers, { passive: true });
+      window.addEventListener('load', () => {
+        setTimeout(revealContainers, 100);
+      });
+      revealContainers();
+    })();
+  </script>
+</body>
+</html>
