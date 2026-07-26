@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>C# · Capitolul 6 – Moștenire și polimorfism</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600&display=swap" rel="stylesheet" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    html {
+      overflow-x: hidden;
+      width: 100%;
+    }
+    
+    body {
+      font-family: 'Inter', 'Segoe UI', sans-serif;
+      line-height: 1.6;
+      color: #2c2a2f;
+      background-color: #F7ECE1;
+      min-height: 100vh;
+      overflow-x: hidden;
+      width: 100%;
+      max-width: 100vw;
+      position: relative;
+    }
+    
+    a, button, .nav-link, .bar, .highlight, .subcapitol-card {
+      transition: all 0.25s ease;
+    }
+    
+    header {
+      background: linear-gradient(145deg, #CAC4CE 0%, #8D86C9 100%);
+      box-shadow: 0 8px 24px rgba(114, 90, 193, 0.15);
+      border-bottom: 1px solid rgba(255, 238, 221, 0.4);
+      backdrop-filter: blur(2px);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      width: 100%;
+    }
+    
+    .navbar {
+      min-height: 76px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 32px;
+      max-width: 1280px;
+      margin: 0 auto;
+      width: 100%;
+    }
+    
+    .nav-branding {
+      font-size: 2.2rem;
+      font-weight: 600;
+      letter-spacing: 1px;
+      color: #F7ECE1;
+      text-shadow: 0 2px 8px rgba(114, 90, 193, 0.3);
+      text-decoration: none;
+      position: relative;
+      z-index: 1001;
+    }
+    
+    .nav-branding::after {
+      content: '';
+      position: absolute;
+      bottom: 4px;
+      left: 0;
+      width: 0;
+      height: 3px;
+      background: #FFEEDD;
+      border-radius: 4px;
+      transition: width 0.4s ease;
+    }
+    
+    .nav-branding:hover::after { width: 80%; }
+    .nav-branding:hover { transform: scale(1.02); color: #ffffff; }
+    
+    .nav-menu { display: flex; align-items: center; gap: 40px; list-style: none; }
+    
+    .nav-link {
+      color: #F7ECE1;
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 1.05rem;
+      padding: 6px 0;
+      position: relative;
+      letter-spacing: 0.3px;
+      border-bottom: 2px solid transparent;
+      white-space: nowrap;
+    }
+    
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: #FFEEDD;
+      border-radius: 4px;
+      transition: width 0.35s ease;
+    }
+    
+    .nav-link:hover { color: #ffffff; }
+    .nav-link:hover::after { width: 100%; }
+    
+    .hamburger {
+      display: none;
+      cursor: pointer;
+      flex-direction: column;
+      gap: 5px;
+      padding: 6px 4px;
+      z-index: 1001;
+      position: relative;
+    }
+    
+    .bar {
+      display: block;
+      width: 28px;
+      height: 3px;
+      background: #F7ECE1;
+      border-radius: 6px;
+      transition: all 0.3s ease-in-out;
+      transform-origin: center;
+    }
+    
+    @media (max-width: 768px) {
+      .navbar { padding: 0 20px; min-height: 70px; }
+      .nav-branding { font-size: 1.8rem; }
+      .hamburger { display: flex; }
+      
+      .nav-menu {
+        position: fixed;
+        left: -100%;
+        top: 70px;
+        flex-direction: column;
+        background: linear-gradient(160deg, #CAC4CE 0%, #8D86C9 100%);
+        width: 100%;
+        max-width: 100vw;
+        padding: 28px 0;
+        gap: 24px;
+        box-shadow: 0 18px 40px rgba(114, 90, 193, 0.2);
+        transition: 0.35s cubic-bezier(0.23, 1, 0.32, 1);
+        backdrop-filter: blur(6px);
+        border-top: 1px solid rgba(255, 238, 221, 0.25);
+      }
+      
+      .nav-menu.active { left: 0; }
+      .nav-item { margin: 0; width: 100%; text-align: center; }
+      .nav-link { font-size: 1.2rem; padding: 6px 0; display: block; width: 100%; }
+      
+      .hamburger.active .bar:nth-child(1) { transform: translateY(8px) rotate(45deg); }
+      .hamburger.active .bar:nth-child(2) { opacity: 0; transform: scaleX(0); }
+      .hamburger.active .bar:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
+    }
+    
+    @media (max-width: 480px) {
+      .navbar { padding: 0 16px; min-height: 64px; }
+      .nav-branding { font-size: 1.6rem; }
+      .nav-menu { top: 64px; }
+    }
+    
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 32px 24px;
+      width: 100%;
+      overflow-wrap: break-word;
+      word-wrap: break-word;
+      word-break: break-word;
+    }
+    
+    .breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+      font-size: 0.95rem;
+      color: #725AC1;
+      opacity: 0;
+      animation: fadeSlide 0.6s ease forwards;
+      flex-wrap: wrap;
+    }
+    
+    .breadcrumb a { color: #8D86C9; text-decoration: none; font-weight: 500; white-space: nowrap; }
+    .breadcrumb a:hover { color: #725AC1; text-decoration: underline; }
+    .breadcrumb span { color: #CAC4CE; }
+    .breadcrumb strong { white-space: nowrap; }
+    
+    .chapter-header-section {
+      margin-bottom: 32px;
+      padding-bottom: 20px;
+      border-bottom: 3px solid rgba(141, 134, 201, 0.2);
+      opacity: 0;
+      animation: fadeSlide 0.7s ease forwards;
+      animation-delay: 0.1s;
+    }
+    
+    @keyframes fadeSlide {
+      0% { opacity: 0; transform: translateY(18px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+    
+    .chapter-badge {
+      display: inline-block;
+      background: linear-gradient(135deg, #CAC4CE, #8D86C9);
+      color: #F7ECE1;
+      padding: 6px 18px;
+      border-radius: 40px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      letter-spacing: 0.5px;
+      margin-bottom: 12px;
+    }
+    
+    .chapter-header-section h1 {
+      font-size: 2.4rem;
+      color: #725AC1;
+      letter-spacing: -0.5px;
+      margin-bottom: 8px;
+      line-height: 1.2;
+    }
+    
+    .chapter-header-section .chapter-subtitle {
+      font-size: 1.1rem;
+      color: #4b4752;
+      font-style: italic;
+      line-height: 1.5;
+    }
+    
+    .subcapitol-card {
+      background: rgba(255, 238, 221, 0.55);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(202, 196, 206, 0.3);
+      border-radius: 28px;
+      padding: 24px 28px;
+      margin-bottom: 24px;
+      box-shadow: 0 8px 24px rgba(141, 134, 201, 0.04);
+      opacity: 0;
+      transform: translateY(20px);
+      transition: background 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease, transform 0.35s ease;
+      width: 100%;
+    }
+    
+    .subcapitol-card.reveal { opacity: 1; transform: translateY(0); }
+    
+    .subcapitol-card:hover {
+      background: rgba(255, 238, 221, 0.8);
+      border-color: #CAC4CE;
+      box-shadow: 0 14px 36px rgba(114, 90, 193, 0.1);
+      transform: translateY(-4px);
+    }
+    
+    .subcapitol-card h2 {
+      font-size: 1.5rem;
+      color: #725AC1;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      line-height: 1.3;
+      flex-wrap: wrap;
+    }
+    
+    .subcapitol-card p {
+      font-size: 1.02rem;
+      color: #3d3a42;
+      line-height: 1.7;
+      margin-bottom: 12px;
+      word-break: break-word;
+    }
+    
+    .subcapitol-card ul { list-style: none; padding-left: 8px; }
+    
+    .subcapitol-card ul li {
+      padding: 6px 0;
+      font-size: 0.98rem;
+      color: #3d3a42;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      word-break: break-word;
+      line-height: 1.5;
+    }
+    
+    .subcapitol-card ul li::before {
+      content: '\25B9';
+      color: #8D86C9;
+      font-weight: bold;
+      font-size: 1.1rem;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    
+    .highlight {
+      background: linear-gradient(120deg, #CAC4CE 0%, #8D86C9 100%);
+      background-size: 200% 100%;
+      color: #F7ECE1;
+      padding: 2px 12px;
+      border-radius: 40px;
+      font-weight: 600;
+      display: inline-block;
+      animation: shimmer 4s infinite alternate;
+      white-space: normal;
+      word-break: break-word;
+    }
+    
+    @keyframes shimmer {
+      0% { background-position: 0% 50%; }
+      100% { background-position: 100% 50%; }
+    }
+    
+    .highlight:hover { transform: scale(1.04); background: #725AC1; }
+    
+    code {
+      background: rgba(202, 196, 206, 0.2);
+      padding: 2px 10px;
+      border-radius: 20px;
+      font-family: 'Fira Code', 'Consolas', monospace;
+      font-size: 0.9rem;
+      color: #725AC1;
+      word-break: break-all;
+      white-space: pre-wrap;
+      display: inline-block;
+      max-width: 100%;
+    }
+    
+    .code-block {
+      background: rgba(44, 42, 47, 0.85);
+      color: #F7ECE1;
+      padding: 16px 20px;
+      border-radius: 16px;
+      margin: 12px 0;
+      font-family: 'Fira Code', 'Consolas', monospace;
+      font-size: 0.9rem;
+      overflow-x: auto;
+      line-height: 1.7;
+      word-break: break-all;
+      white-space: pre-wrap;
+      max-width: 100%;
+    }
+    
+    .code-block .keyword { color: #CAC4CE; }
+    .code-block .string { color: #FFEEDD; }
+    .code-block .comment { color: #8D86C9; font-style: italic; }
+    .code-block .type { color: #8D86C9; }
+    .code-block .method { color: #FFEEDD; }
+    .code-block .modifier { color: #FFEEDD; }
+    
+    .schema-placeholder {
+      background: rgba(202, 196, 206, 0.15);
+      border: 2px dashed #8D86C9;
+      border-radius: 16px;
+      padding: 20px;
+      margin: 16px 0;
+      text-align: center;
+      min-height: 200px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      max-width: 100%;
+      overflow: hidden;
+    }
+    
+    .schema-placeholder img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 8px;
+    }
+    
+    .schema-placeholder .placeholder-text {
+      color: #8D86C9;
+      font-size: 0.95rem;
+      opacity: 0.7;
+    }
+    
+    .chapter-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 40px;
+      padding-top: 24px;
+      border-top: 2px solid rgba(202, 196, 206, 0.3);
+      opacity: 0;
+      animation: fadeSlide 0.7s ease forwards;
+      animation-delay: 0.6s;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    
+    .nav-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 24px;
+      background: #CAC4CE;
+      color: #2c2a2f;
+      text-decoration: none;
+      border-radius: 60px;
+      font-weight: 500;
+      box-shadow: 0 4px 12px rgba(114, 90, 193, 0.08);
+      border: 1px solid rgba(255, 238, 221, 0.3);
+      white-space: nowrap;
+      text-align: center;
+    }
+    
+    .nav-btn:hover {
+      background: #8D86C9;
+      color: #F7ECE1;
+      transform: translateY(-2px);
+      box-shadow: 0 10px 28px rgba(114, 90, 193, 0.18);
+    }
+    
+    .nav-btn.prev::before { content: '\2190'; font-size: 1.2rem; }
+    .nav-btn.next::after { content: '\2192'; font-size: 1.2rem; }
+    .nav-btn.disabled { opacity: 0.4; pointer-events: none; cursor: default; }
+    
+    .back-to-chapters {
+      display: inline-block;
+      margin-top: 16px;
+      color: #8D86C9;
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 0.95rem;
+      white-space: nowrap;
+    }
+    
+    .back-to-chapters:hover { color: #725AC1; text-decoration: underline; }
+    .back-to-chapters::before { content: '\2190 '; }
+    
+    .chapter-footer {
+      text-align: center;
+      margin-top: 48px;
+      font-size: 0.9rem;
+      color: #8D86C9;
+      opacity: 0.7;
+      word-break: break-word;
+    }
+    
+    @media (max-width: 768px) {
+      .container { padding: 24px 20px; }
+      .chapter-header-section h1 { font-size: 2rem; }
+      .chapter-header-section .chapter-subtitle { font-size: 1rem; }
+      .subcapitol-card { padding: 20px 22px; border-radius: 24px; }
+      .subcapitol-card h2 { font-size: 1.35rem; }
+      .chapter-nav { justify-content: center; }
+      .back-to-chapters { order: 3; width: 100%; text-align: center; }
+    }
+    
+    @media (max-width: 600px) {
+      .container { padding: 20px 16px; }
+      .chapter-header-section h1 { font-size: 1.8rem; }
+      .subcapitol-card { padding: 18px 18px; border-radius: 20px; }
+      .subcapitol-card h2 { font-size: 1.25rem; }
+      .subcapitol-card p { font-size: 0.95rem; }
+      .subcapitol-card ul li { font-size: 0.92rem; }
+      .code-block { font-size: 0.8rem; padding: 12px 14px; }
+      .chapter-nav { flex-direction: column; align-items: center; }
+      .nav-btn { width: 100%; justify-content: center; }
+      .nav-btn.disabled { display: none; }
+      .back-to-chapters { margin-top: 8px; }
+      .breadcrumb { font-size: 0.85rem; }
+    }
+    
+    @media (max-width: 400px) {
+      .container { padding: 16px 12px; }
+      .chapter-header-section h1 { font-size: 1.5rem; }
+      .chapter-header-section .chapter-subtitle { font-size: 0.9rem; }
+      .subcapitol-card { padding: 16px 14px; border-radius: 18px; }
+      .subcapitol-card h2 { font-size: 1.15rem; }
+      .subcapitol-card p,
+      .subcapitol-card ul li { font-size: 0.88rem; }
+      code { font-size: 0.8rem; padding: 1px 6px; }
+      .highlight { font-size: 0.9rem; padding: 2px 8px; }
+      .chapter-badge { font-size: 0.8rem; padding: 4px 14px; }
+      .code-block { font-size: 0.75rem; padding: 10px 12px; }
+    }
+    
+    a:focus-visible, button:focus-visible {
+      outline: 3px solid #8D86C9;
+      outline-offset: 4px;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <nav class="navbar">
+      <a href="../index.html" class="nav-branding">C#</a>
+      <ul class="nav-menu">
+        <li class="nav-item"><a href="../index.html" class="nav-link">Acasă</a></li>
+        <li class="nav-item"><a href="../capitole.html" class="nav-link">Capitole</a></li>
+        <li class="nav-item"><a href="../compilator.html" class="nav-link">Compilator</a></li>
+      </ul>
+      <div class="hamburger" aria-label="meniu" role="button" tabindex="0">
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <div class="container">
+      <div class="breadcrumb">
+        <a href="../index.html">Acasă</a>
+        <span>›</span>
+        <a href="../capitole.html">Capitole</a>
+        <span>›</span>
+        <strong>Capitolul 6</strong>
+      </div>
+
+      <div class="chapter-header-section">
+        <span class="chapter-badge">Capitolul 6</span>
+        <h1>Moștenire și polimorfism</h1>
+        <p class="chapter-subtitle">Extinderea claselor, suprascrierea metodelor și interfețe</p>
+      </div>
+
+      <div class="subcapitol-card" data-reveal>
+        <h2>Conceptul de moștenire</h2>
+        <p>
+          <span class="highlight">Moștenirea</span> este un mecanism fundamental în POO care permite unei clase (derivate) să preia membrii unei alte clase (de bază). Aceasta promovează reutilizarea codului și creează o relație ierarhică de tip „este-un" (is-a).
+        </p>
+        <div class="code-block">
+          <span class="comment">// Clasa de bază (părinte)</span><br>
+          <span class="keyword">class</span> <span class="type">Animal</span> {<br>
+          &nbsp;&nbsp;<span class="keyword">public string</span> Nume { <span class="keyword">get</span>; <span class="keyword">set</span>; }<br><br>
+          &nbsp;&nbsp;<span class="keyword">public void</span> <span class="method">Mananca</span>() {<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;Console.WriteLine(<span class="string">$"{Nume} mananca."</span>);<br>
+          &nbsp;&nbsp;}<br>
+          }<br><br>
+          <span class="comment">// Clasa derivată (copil)</span><br>
+          <span class="keyword">class</span> <span class="type">Caine</span> : <span class="type">Animal</span> {<br>
+          &nbsp;&nbsp;<span class="keyword">public void</span> <span class="method">Latra</span>() {<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;Console.WriteLine(<span class="string">$"{Nume} latra: Ham ham!"</span>);<br>
+          &nbsp;&nbsp;}<br>
+          }<br><br>
+          <span class="comment">// Utilizare</span><br>
+          <span class="type">Caine</span> caine = <span class="keyword">new</span> <span class="type">Caine</span>();<br>
+          caine.Nume = <span class="string">"Rex"</span>;<br>
+          caine.<span class="method">Mananca</span>(); <span class="comment">// Metodă moștenită din Animal</span><br>
+          caine.<span class="method">Latra</span>(); &nbsp;<span class="comment">// Metodă specifică clasei Caine</span>
+        </div>
+        <ul>
+          <li><strong>Sintaxa:</strong> <code>class ClasaDerivata : ClasaDeBaza</code> – operatorul <code>:</code> indică moștenirea.</li>
+          <li><strong>C# permite moștenire simplă:</strong> o clasă poate moșteni direct doar o singură clasă de bază.</li>
+          <li><strong>Clasa derivată</strong> are acces la toți membrii <code>public</code> și <code>protected</code> ai clasei de bază.</li>
+          <li><strong>Constructorii nu se moștenesc</strong>, dar constructorul clasei de bază este apelat automat înaintea celui derivat.</li>
+        </ul>
+      </div>
+
+      <div class="subcapitol-card" data-reveal>
+        <h2>Constructorii în moștenire și base</h2>
+        <p>
+          Cuvântul cheie <span class="highlight">base</span> este folosit pentru a accesa membrii clasei de bază din clasa derivată. Este esențial în apelarea constructorilor clasei părinte și în accesarea metodelor suprascrise.
+        </p>
+        <div class="code-block">
+          <span class="keyword">class</span> <span class="type">Vehicul</span> {<br>
+          &nbsp;&nbsp;<span class="keyword">public string</span> Marca { <span class="keyword">get</span>; <span class="keyword">set</span>; }<br><br>
+          &nbsp;&nbsp;<span class="keyword">public</span> <span class="method">Vehicul</span>(<span class="type">string</span> marca) {<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;Marca = marca;<br>
+          &nbsp;&nbsp;}<br>
+          }<br><br>
+          <span class="keyword">class</span> <span class="type">Masina</span> : <span class="type">Vehicul</span> {<br>
+          &nbsp;&nbsp;<span class="keyword">public int</span> NumarUsi { <span class="keyword">get</span>; <span class="keyword">set</span>; }<br><br>
+          &nbsp;&nbsp;<span class="comment">// Apelarea constructorului din clasa de bază cu base</span><br>
+          &nbsp;&nbsp;<span class="keyword">public</span> <span class="method">Masina</span>(<span class="type">string</span> marca, <span class="type">int</span> numarUsi) : <span class="keyword">base</span>(marca) {<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;NumarUsi = numarUsi;<br>
+          &nbsp;&nbsp;}<br>
+          }<br><br>
+          <span class="comment">// base se poate folosi și pentru a apela metode din clasa părinte</span><br>
+          <span class="keyword">class</span> <span class="type">VehiculElectric</span> : <span class="type">Vehicul</span> {<br>
+          &nbsp;&nbsp;<span class="keyword">public override string</span> <span class="method">ToString</span>() {<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> <span class="string">$"Vehicul electric: {base.Marca}"</span>;<br>
+          &nbsp;&nbsp;}<br>
+          }
+        </div>
+        <ul>
+          <li><strong>base()</strong> este folosit în constructorul clasei derivate pentru a apela constructorul clasei de bază.</li>
+          <li><strong>Apelul cu base</strong> trebuie să fie prima instrucțiune din constructorul derivatei.</li>
+          <li><strong>base.Membru</strong> permite accesarea unui membru al clasei de bază care a fost ascuns sau suprascris.</li>
+          <li>Dacă nu specifici explicit <code>base()</code>, compilatorul apelează automat constructorul implicit al clasei de bază.</li>
+        </ul>
+      </div>
+
+      <div class="subcapitol-card" data-reveal>
+        <h2>Metode virtuale și override</h2>
+        <p>
+          <span class="highlight">virtual</span> permite unei metode din clasa de bază să fie suprascrisă în clasele derivate. <span class="highlight">override</span> este folosit în clasa derivată pentru a oferi o implementare specifică a metodei virtuale.
+        </p>
+        <div class="code-block">
+          <span class="keyword">class</span> <span class="type">Forma</span> {<br>
+          &nbsp;&nbsp;<span class="comment">// Metodă virtuală – poate fi suprascrisă</span><br>
+          &nbsp;&nbsp;<span class="keyword">public virtual void</span> <span class="method">Deseneaza</span>() {<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;Console.WriteLine(<span class="string">"Desenez o forma generica."</span>);<br>
+          &nbsp;&nbsp;}<br>
+          }<br><br>
+          <span class="keyword">class</span> <span class="type">Cerc</span> : <span class="type">Forma</span> {<br>
+          &nbsp;&nbsp;<span class="comment">// Suprascrierea metodei virtuale</span><br>
+          &nbsp;&nbsp;<span class="keyword">public override void</span> <span class="method">Deseneaza</span>() {<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;Console.WriteLine(<span class="string">"Desenez un cerc."</span>);<br>
+          &nbsp;&nbsp;}<br>
+          }<br><br>
+          <span class="keyword">class</span> <span class="type">Patrat</span> : <span class="type">Forma</span> {<br>
+          &nbsp;&nbsp;<span class="keyword">public override void</span> <span class="method">Deseneaza</span>() {<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;Console.WriteLine(<span class="string">"Desenez un patrat."</span>);<br>
+          &nbsp;&nbsp;}<br>
+          }
+        </div>
+        <ul>
+          <li><strong>virtual</strong> marchează o metodă care poate fi suprascrisă; metodele sunt non-virtuale în mod implicit.</li>
+          <li><strong>override</strong> este obligatoriu pentru a suprascrie o metodă virtuală; compilatorul verifică să existe o metodă virtuală corespunzătoare.</li>
+          <li><strong>new</strong> ascunde metoda din clasa de bază fără a o suprascrie (nu participă la polimorfism).</li>
+          <li><strong>sealed override</strong> blochează posibilitatea de a mai suprascrie metoda în clasele care derivă mai departe.</li>
+        </ul>
+      </div>
+
+      <div class="subcapitol-card" data-reveal>
+        <h2>Polimorfismul</h2>
+        <p>
+          <span class="highlight">Polimorfismul</span> (din greacă: „mai multe forme") permite tratarea obiectelor de tipuri diferite printr-o interfață comună. La runtime, metoda corectă este apelată în funcție de tipul real al obiectului, nu de tipul referinței.
+        </p>
+        <div class="code-block">
+          <span class="comment">// Colectie eterogenă tratată uniform</span><br>
+          <span class="type">Forma</span>[] forme = <span class="keyword">new</span> <span class="type">Forma</span>[] {<br>
+          &nbsp;&nbsp;<span class="keyword">new</span> <span class="type">Cerc</span>(),<br>
+          &nbsp;&nbsp;<span class="keyword">new</span> <span class="type">Patrat</span>(),<br>
+          &nbsp;&nbsp;<span class="keyword">new</span> <span class="type">Cerc</span>()<br>
+          };<br><br>
+          <span class="comment">// Polimorfism: metoda corectă e apelată automat</span><br>
+          <span class="keyword">foreach</span> (<span class="type">Forma</span> forma <span class="keyword">in</span> forme) {<br>
+          &nbsp;&nbsp;forma.<span class="method">Deseneaza</span>(); <span class="comment">// Fiecare obiect își desenează propria formă</span><br>
+          }<br><br>
+          <span class="comment">// Referința de tipul de bază poate stoca orice obiect derivat</span><br>
+          <span class="type">Forma</span> f = <span class="keyword">new</span> <span class="type">Cerc</span>();<br>
+          f.<span class="method">Deseneaza</span>(); <span class="comment">// "Desenez un cerc." – legare dinamică</span>
+        </div>
+        <ul>
+          <li><strong>Legare dinamică (dynamic binding):</strong> metoda apelată este determinată la runtime, nu la compilare.</li>
+          <li><strong>Upcasting:</strong> conversia implicită de la un tip derivat la tipul de bază (<code>Forma f = new Cerc();</code>).</li>
+          <li><strong>Downcasting:</strong> conversia explicită de la tipul de bază la un tip derivat (<code>Cerc c = (Cerc)f;</code>).</li>
+          <li><strong>is și as:</strong> operatori pentru verificarea tipului la runtime înainte de downcasting.</li>
+        </ul>
+      </div>
+
+      <div class="subcapitol-card" data-reveal>
+        <h2>Clase abstracte</h2>
+        <p>
+          O <span class="highlight">clasă abstractă</span> este o clasă care nu poate fi instanțiată direct. Este marcată cu cuvântul cheie <code>abstract</code> și servește ca șablon pentru clasele derivate. Poate conține atât metode abstracte (fără implementare), cât și metode concrete.
+        </p>
+        <div class="code-block">
+          <span class="comment">// Clasă abstractă – nu poate fi instanțiată</span><br>
+          <span class="keyword">abstract class</span> <span class="type">Angajat</span> {<br>
+          &nbsp;&nbsp;<span class="keyword">public string</span> Nume { <span class="keyword">get</span>; <span class="keyword">set</span>; }<br><br>
+          &nbsp;&nbsp;<span class="comment">// Metodă abstractă – fără implementare</span><br>
+          &nbsp;&nbsp;<span class="keyword">public abstract decimal</span> <span class="method">CalculeazaSalariu</span>();<br><br>
+          &nbsp;&nbsp;<span class="comment">// Metodă concretă – are implementare</span><br>
+          &nbsp;&nbsp;<span class="keyword">public void</span> <span class="method">AfiseazaInfo</span>() {<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;Console.WriteLine(<span class="string">$"Angajat: {Nume}, Salariu: {CalculeazaSalariu()}"</span>);<br>
+          &nbsp;&nbsp;}<br>
+          }<br><br>
+          <span class="keyword">class</span> <span class="type">AngajatFullTime</span> : <span class="type">Angajat</span> {<br>
+          &nbsp;&nbsp;<span class="keyword">public override decimal</span> <span class="method">CalculeazaSalariu</span>() {<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> 5000m;<br>
+          &nbsp;&nbsp;}<br>
+          }
+        </div>
+        <ul>
+          <li><strong>O clasă abstractă</strong> nu poate fi instanțiată cu <code>new</code>; trebuie moștenită.</li>
+          <li><strong>Metodele abstracte</strong> nu au corp și forțează clasele derivate să le implementeze.</li>
+          <li><strong>O clasă concretă</strong> care moștenește o clasă abstractă trebuie să implementeze toate metodele abstracte.</li>
+          <li><strong>Diferența față de interfețe:</strong> clasele abstracte pot avea câmpuri, constructori și metode cu implementare.</li>
+        </ul>
+      </div>
+
+      <div class="subcapitol-card" data-reveal>
+        <h2>Interfețe</h2>
+        <p>
+          O <span class="highlight">interfață</span> definește un contract pe care clasele care o implementează trebuie să îl respecte. Conține doar semnături de metode, proprietăți, evenimente și indexatori, fără implementare. O clasă poate implementa mai multe interfețe.
+        </p>
+        <div class="code-block">
+          <span class="comment">// Definirea unei interfețe</span><br>
+          <span class="keyword">interface</span> <span class="type">IVolabil</span> {<br>
+          &nbsp;&nbsp;<span class="keyword">void</span> <span class="method">Zboara</span>();<br>
+          &nbsp;&nbsp;<span class="keyword">int</span> AltitudineMaxima { <span class="keyword">get</span>; }<br>
+          }<br><br>
+          <span class="keyword">interface</span> <span class="type">IAcvatic</span> {<br>
+          &nbsp;&nbsp;<span class="keyword">void</span> <span class="method">Inoata</span>();<br>
+          }<br><br>
+          <span class="comment">// O clasă poate implementa mai multe interfețe</span><br>
+          <span class="keyword">class</span> <span class="type">Rata</span> : <span class="type">IVolabil</span>, <span class="type">IAcvatic</span> {<br>
+          &nbsp;&nbsp;<span class="keyword">public int</span> AltitudineMaxima => 1000;<br><br>
+          &nbsp;&nbsp;<span class="keyword">public void</span> <span class="method">Zboara</span>() {<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;Console.WriteLine(<span class="string">"Rata zboara."</span>);<br>
+          &nbsp;&nbsp;}<br><br>
+          &nbsp;&nbsp;<span class="keyword">public void</span> <span class="method">Inoata</span>() {<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;Console.WriteLine(<span class="string">"Rata inoata."</span>);<br>
+          &nbsp;&nbsp;}<br>
+          }
+        </div>
+        <ul>
+          <li><strong>Interfețele</strong> se declară cu <code>interface</code> și, prin convenție, numele lor începe cu <code>I</code>.</li>
+          <li><strong>Toți membrii</strong> unei interfețe sunt implicit <code>public</code> și nu pot avea modificatori de acces.</li>
+          <li><strong>O clasă poate implementa mai multe interfețe</strong>, rezolvând limitarea moștenirii simple.</li>
+          <li><strong>Implementare explicită:</strong> când două interfețe au membri cu același nume, se folosește <code>NumeInterfata.Metoda()</code>.</li>
+        </ul>
+      </div>
+
+      <div class="chapter-nav">
+        <a href="5.html" class="nav-btn prev">Capitolul 5</a>
+        <a href="../capitole.html" class="back-to-chapters">Inapoi la toate capitolele</a>
+        <a href="7.html" class="nav-btn next">Capitolul 7</a>
+      </div>
+
+      <p class="chapter-footer">
+        Capitolul 6 din 10 - made with love by <strong>Amalia</strong>
+      </p>
+    </div>
+  </main>
+
+  <script>
+    (function() {
+      const hamburger = document.querySelector('.hamburger');
+      const navMenu = document.querySelector('.nav-menu');
+      
+      function toggleMenu() {
+        hamburger.classList.toggle('active');
+        navMenu.classList.toggle('active');
+      }
+      
+      hamburger.addEventListener('click', toggleMenu);
+      
+      document.querySelectorAll('.nav-link').forEach(link => {
+        link.addEventListener('click', () => {
+          if (navMenu.classList.contains('active')) {
+            hamburger.classList.remove('active');
+            navMenu.classList.remove('active');
+          }
+        });
+      });
+      
+      document.addEventListener('click', (e) => {
+        if (navMenu.classList.contains('active') && !e.target.closest('nav') && !e.target.closest('.hamburger')) {
+          hamburger.classList.remove('active');
+          navMenu.classList.remove('active');
+        }
+      });
+      
+      hamburger.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          toggleMenu();
+        }
+      });
+      
+      function revealSubcapitole() {
+        const cards = document.querySelectorAll('.subcapitol-card[data-reveal]');
+        const windowHeight = window.innerHeight;
+        
+        cards.forEach(card => {
+          const rect = card.getBoundingClientRect();
+          if (rect.top < windowHeight - 80 && !card.classList.contains('reveal')) {
+            requestAnimationFrame(() => {
+              card.classList.add('reveal');
+            });
+          }
+        });
+      }
+      
+      window.addEventListener('scroll', revealSubcapitole, { passive: true });
+      window.addEventListener('load', () => {
+        setTimeout(revealSubcapitole, 150);
+      });
+      revealSubcapitole();
+    })();
+  </script>
+</body>
+</html>
