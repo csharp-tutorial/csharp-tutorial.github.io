@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>C# · Capitolul 7 – Colecții și generice</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600&display=swap" rel="stylesheet" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    html {
+      overflow-x: hidden;
+      width: 100%;
+    }
+    
+    body {
+      font-family: 'Inter', 'Segoe UI', sans-serif;
+      line-height: 1.6;
+      color: #2c2a2f;
+      background-color: #F7ECE1;
+      min-height: 100vh;
+      overflow-x: hidden;
+      width: 100%;
+      max-width: 100vw;
+      position: relative;
+    }
+    
+    a, button, .nav-link, .bar, .highlight, .subcapitol-card {
+      transition: all 0.25s ease;
+    }
+    
+    header {
+      background: linear-gradient(145deg, #CAC4CE 0%, #8D86C9 100%);
+      box-shadow: 0 8px 24px rgba(114, 90, 193, 0.15);
+      border-bottom: 1px solid rgba(255, 238, 221, 0.4);
+      backdrop-filter: blur(2px);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      width: 100%;
+    }
+    
+    .navbar {
+      min-height: 76px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 32px;
+      max-width: 1280px;
+      margin: 0 auto;
+      width: 100%;
+    }
+    
+    .nav-branding {
+      font-size: 2.2rem;
+      font-weight: 600;
+      letter-spacing: 1px;
+      color: #F7ECE1;
+      text-shadow: 0 2px 8px rgba(114, 90, 193, 0.3);
+      text-decoration: none;
+      position: relative;
+      z-index: 1001;
+    }
+    
+    .nav-branding::after {
+      content: '';
+      position: absolute;
+      bottom: 4px;
+      left: 0;
+      width: 0;
+      height: 3px;
+      background: #FFEEDD;
+      border-radius: 4px;
+      transition: width 0.4s ease;
+    }
+    
+    .nav-branding:hover::after { width: 80%; }
+    .nav-branding:hover { transform: scale(1.02); color: #ffffff; }
+    
+    .nav-menu { display: flex; align-items: center; gap: 40px; list-style: none; }
+    
+    .nav-link {
+      color: #F7ECE1;
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 1.05rem;
+      padding: 6px 0;
+      position: relative;
+      letter-spacing: 0.3px;
+      border-bottom: 2px solid transparent;
+      white-space: nowrap;
+    }
+    
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: #FFEEDD;
+      border-radius: 4px;
+      transition: width 0.35s ease;
+    }
+    
+    .nav-link:hover { color: #ffffff; }
+    .nav-link:hover::after { width: 100%; }
+    
+    .hamburger {
+      display: none;
+      cursor: pointer;
+      flex-direction: column;
+      gap: 5px;
+      padding: 6px 4px;
+      z-index: 1001;
+      position: relative;
+    }
+    
+    .bar {
+      display: block;
+      width: 28px;
+      height: 3px;
+      background: #F7ECE1;
+      border-radius: 6px;
+      transition: all 0.3s ease-in-out;
+      transform-origin: center;
+    }
+    
+    @media (max-width: 768px) {
+      .navbar { padding: 0 20px; min-height: 70px; }
+      .nav-branding { font-size: 1.8rem; }
+      .hamburger { display: flex; }
+      
+      .nav-menu {
+        position: fixed;
+        left: -100%;
+        top: 70px;
+        flex-direction: column;
+        background: linear-gradient(160deg, #CAC4CE 0%, #8D86C9 100%);
+        width: 100%;
+        max-width: 100vw;
+        padding: 28px 0;
+        gap: 24px;
+        box-shadow: 0 18px 40px rgba(114, 90, 193, 0.2);
+        transition: 0.35s cubic-bezier(0.23, 1, 0.32, 1);
+        backdrop-filter: blur(6px);
+        border-top: 1px solid rgba(255, 238, 221, 0.25);
+      }
+      
+      .nav-menu.active { left: 0; }
+      .nav-item { margin: 0; width: 100%; text-align: center; }
+      .nav-link { font-size: 1.2rem; padding: 6px 0; display: block; width: 100%; }
+      
+      .hamburger.active .bar:nth-child(1) { transform: translateY(8px) rotate(45deg); }
+      .hamburger.active .bar:nth-child(2) { opacity: 0; transform: scaleX(0); }
+      .hamburger.active .bar:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
+    }
+    
+    @media (max-width: 480px) {
+      .navbar { padding: 0 16px; min-height: 64px; }
+      .nav-branding { font-size: 1.6rem; }
+      .nav-menu { top: 64px; }
+    }
+    
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 32px 24px;
+      width: 100%;
+      overflow-wrap: break-word;
+      word-wrap: break-word;
+      word-break: break-word;
+    }
+    
+    .breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+      font-size: 0.95rem;
+      color: #725AC1;
+      opacity: 0;
+      animation: fadeSlide 0.6s ease forwards;
+      flex-wrap: wrap;
+    }
+    
+    .breadcrumb a { color: #8D86C9; text-decoration: none; font-weight: 500; white-space: nowrap; }
+    .breadcrumb a:hover { color: #725AC1; text-decoration: underline; }
+    .breadcrumb span { color: #CAC4CE; }
+    .breadcrumb strong { white-space: nowrap; }
+    
+    .chapter-header-section {
+      margin-bottom: 32px;
+      padding-bottom: 20px;
+      border-bottom: 3px solid rgba(141, 134, 201, 0.2);
+      opacity: 0;
+      animation: fadeSlide 0.7s ease forwards;
+      animation-delay: 0.1s;
+    }
+    
+    @keyframes fadeSlide {
+      0% { opacity: 0; transform: translateY(18px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+    
+    .chapter-badge {
+      display: inline-block;
+      background: linear-gradient(135deg, #CAC4CE, #8D86C9);
+      color: #F7ECE1;
+      padding: 6px 18px;
+      border-radius: 40px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      letter-spacing: 0.5px;
+      margin-bottom: 12px;
+    }
+    
+    .chapter-header-section h1 {
+      font-size: 2.4rem;
+      color: #725AC1;
+      letter-spacing: -0.5px;
+      margin-bottom: 8px;
+      line-height: 1.2;
+    }
+    
+    .chapter-header-section .chapter-subtitle {
+      font-size: 1.1rem;
+      color: #4b4752;
+      font-style: italic;
+      line-height: 1.5;
+    }
+    
+    .subcapitol-card {
+      background: rgba(255, 238, 221, 0.55);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(202, 196, 206, 0.3);
+      border-radius: 28px;
+      padding: 24px 28px;
+      margin-bottom: 24px;
+      box-shadow: 0 8px 24px rgba(141, 134, 201, 0.04);
+      opacity: 0;
+      transform: translateY(20px);
+      transition: background 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease, transform 0.35s ease;
+      width: 100%;
+    }
+    
+    .subcapitol-card.reveal { opacity: 1; transform: translateY(0); }
+    
+    .subcapitol-card:hover {
+      background: rgba(255, 238, 221, 0.8);
+      border-color: #CAC4CE;
+      box-shadow: 0 14px 36px rgba(114, 90, 193, 0.1);
+      transform: translateY(-4px);
+    }
+    
+    .subcapitol-card h2 {
+      font-size: 1.5rem;
+      color: #725AC1;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      line-height: 1.3;
+      flex-wrap: wrap;
+    }
+    
+    .subcapitol-card p {
+      font-size: 1.02rem;
+      color: #3d3a42;
+      line-height: 1.7;
+      margin-bottom: 12px;
+      word-break: break-word;
+    }
+    
+    .subcapitol-card ul { list-style: none; padding-left: 8px; }
+    
+    .subcapitol-card ul li {
+      padding: 6px 0;
+      font-size: 0.98rem;
+      color: #3d3a42;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      word-break: break-word;
+      line-height: 1.5;
+    }
+    
+    .subcapitol-card ul li::before {
+      content: '\25B9';
+      color: #8D86C9;
+      font-weight: bold;
+      font-size: 1.1rem;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    
+    .highlight {
+      background: linear-gradient(120deg, #CAC4CE 0%, #8D86C9 100%);
+      background-size: 200% 100%;
+      color: #F7ECE1;
+      padding: 2px 12px;
+      border-radius: 40px;
+      font-weight: 600;
+      display: inline-block;
+      animation: shimmer 4s infinite alternate;
+      white-space: normal;
+      word-break: break-word;
+    }
+    
+    @keyframes shimmer {
+      0% { background-position: 0% 50%; }
+      100% { background-position: 100% 50%; }
+    }
+    
+    .highlight:hover { transform: scale(1.04); background: #725AC1; }
+    
+    code {
+      background: rgba(202, 196, 206, 0.2);
+      padding: 2px 10px;
+      border-radius: 20px;
+      font-family: 'Fira Code', 'Consolas', monospace;
+      font-size: 0.9rem;
+      color: #725AC1;
+      word-break: break-all;
+      white-space: pre-wrap;
+      display: inline-block;
+      max-width: 100%;
+    }
+    
+    .code-block {
+      background: rgba(44, 42, 47, 0.85);
+      color: #F7ECE1;
+      padding: 16px 20px;
+      border-radius: 16px;
+      margin: 12px 0;
+      font-family: 'Fira Code', 'Consolas', monospace;
+      font-size: 0.9rem;
+      overflow-x: auto;
+      line-height: 1.7;
+      word-break: break-all;
+      white-space: pre-wrap;
+      max-width: 100%;
+    }
+    
+    .code-block .keyword { color: #CAC4CE; }
+    .code-block .string { color: #FFEEDD; }
+    .code-block .comment { color: #8D86C9; font-style: italic; }
+    .code-block .type { color: #8D86C9; }
+    .code-block .method { color: #FFEEDD; }
+    
+    .chapter-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 40px;
+      padding-top: 24px;
+      border-top: 2px solid rgba(202, 196, 206, 0.3);
+      opacity: 0;
+      animation: fadeSlide 0.7s ease forwards;
+      animation-delay: 0.6s;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    
+    .nav-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 24px;
+      background: #CAC4CE;
+      color: #2c2a2f;
+      text-decoration: none;
+      border-radius: 60px;
+      font-weight: 500;
+      box-shadow: 0 4px 12px rgba(114, 90, 193, 0.08);
+      border: 1px solid rgba(255, 238, 221, 0.3);
+      white-space: nowrap;
+      text-align: center;
+    }
+    
+    .nav-btn:hover {
+      background: #8D86C9;
+      color: #F7ECE1;
+      transform: translateY(-2px);
+      box-shadow: 0 10px 28px rgba(114, 90, 193, 0.18);
+    }
+    
+    .nav-btn.prev::before { content: '\2190'; font-size: 1.2rem; }
+    .nav-btn.next::after { content: '\2192'; font-size: 1.2rem; }
+    .nav-btn.disabled { opacity: 0.4; pointer-events: none; cursor: default; }
+    
+    .back-to-chapters {
+      display: inline-block;
+      margin-top: 16px;
+      color: #8D86C9;
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 0.95rem;
+      white-space: nowrap;
+    }
+    
+    .back-to-chapters:hover { color: #725AC1; text-decoration: underline; }
+    .back-to-chapters::before { content: '\2190 '; }
+    
+    .chapter-footer {
+      text-align: center;
+      margin-top: 48px;
+      font-size: 0.9rem;
+      color: #8D86C9;
+      opacity: 0.7;
+      word-break: break-word;
+    }
+    
+    @media (max-width: 768px) {
+      .container { padding: 24px 20px; }
+      .chapter-header-section h1 { font-size: 2rem; }
+      .chapter-header-section .chapter-subtitle { font-size: 1rem; }
+      .subcapitol-card { padding: 20px 22px; border-radius: 24px; }
+      .subcapitol-card h2 { font-size: 1.35rem; }
+      .chapter-nav { justify-content: center; }
+      .back-to-chapters { order: 3; width: 100%; text-align: center; }
+    }
+    
+    @media (max-width: 600px) {
+      .container { padding: 20px 16px; }
+      .chapter-header-section h1 { font-size: 1.8rem; }
+      .subcapitol-card { padding: 18px 18px; border-radius: 20px; }
+      .subcapitol-card h2 { font-size: 1.25rem; }
+      .subcapitol-card p { font-size: 0.95rem; }
+      .subcapitol-card ul li { font-size: 0.92rem; }
+      .code-block { font-size: 0.8rem; padding: 12px 14px; }
+      .chapter-nav { flex-direction: column; align-items: center; }
+      .nav-btn { width: 100%; justify-content: center; }
+      .nav-btn.disabled { display: none; }
+      .back-to-chapters { margin-top: 8px; }
+      .breadcrumb { font-size: 0.85rem; }
+    }
+    
+    @media (max-width: 400px) {
+      .container { padding: 16px 12px; }
+      .chapter-header-section h1 { font-size: 1.5rem; }
+      .chapter-header-section .chapter-subtitle { font-size: 0.9rem; }
+      .subcapitol-card { padding: 16px 14px; border-radius: 18px; }
+      .subcapitol-card h2 { font-size: 1.15rem; }
+      .subcapitol-card p,
+      .subcapitol-card ul li { font-size: 0.88rem; }
+      code { font-size: 0.8rem; padding: 1px 6px; }
+      .highlight { font-size: 0.9rem; padding: 2px 8px; }
+      .chapter-badge { font-size: 0.8rem; padding: 4px 14px; }
+      .code-block { font-size: 0.75rem; padding: 10px 12px; }
+    }
+    
+    a:focus-visible, button:focus-visible {
+      outline: 3px solid #8D86C9;
+      outline-offset: 4px;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <nav class="navbar">
+      <a href="../index.html" class="nav-branding">C#</a>
+      <ul class="nav-menu">
+        <li class="nav-item"><a href="../index.html" class="nav-link">Acasă</a></li>
+        <li class="nav-item"><a href="../capitole.html" class="nav-link">Capitole</a></li>
+        <li class="nav-item"><a href="../compilator.html" class="nav-link">Compilator</a></li>
+      </ul>
+      <div class="hamburger" aria-label="meniu" role="button" tabindex="0">
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <div class="container">
+      <div class="breadcrumb">
+        <a href="../index.html">Acasă</a>
+        <span>›</span>
+        <a href="../capitole.html">Capitole</a>
+        <span>›</span>
+        <strong>Capitolul 7</strong>
+      </div>
+
+      <div class="chapter-header-section">
+        <span class="chapter-badge">Capitolul 7</span>
+        <h1>Colecții și generice</h1>
+        <p class="chapter-subtitle">Liste, dicționare, cozi, stive și tipuri generice</p>
+      </div>
+
+      <div class="subcapitol-card" data-reveal>
+        <h2>Introducere în colecții</h2>
+        <p>
+          <span class="highlight">Colecțiile</span> sunt structuri de date care permit stocarea și gestionarea mai multor elemente. Spre deosebire de array-uri, colecțiile au dimensiune dinamică și oferă metode avansate pentru adăugare, eliminare, căutare și sortare. În C#, există două categorii principale: colecții non-generice (vechi, din <code>System.Collections</code>) și colecții generice (moderne, din <code>System.Collections.Generic</code>).
+        </p>
+        <div class="code-block">
+          <span class="comment">// Spațiul de nume necesar pentru colecții generice</span><br>
+          <span class="keyword">using</span> System.Collections.Generic;<br><br>
+          <span class="comment">// Comparație: array vs colecție</span><br>
+          <span class="type">int</span>[] array = <span class="keyword">new</span> <span class="type">int</span>[3]; <span class="comment">// Dimensiune fixă</span><br>
+          <span class="type">List</span>&lt;<span class="type">int</span>&gt; lista = <span class="keyword">new</span> <span class="type">List</span>&lt;<span class="type">int</span>&gt;(); <span class="comment">// Dimensiune dinamică</span>
+        </div>
+        <ul>
+          <li><strong>Colecțiile generice</strong> oferă siguranța tipurilor la compilare și performanță mai bună decât cele non-generice.</li>
+          <li><strong>Principalele colecții generice:</strong> <code>List&lt;T&gt;</code>, <code>Dictionary&lt;TKey,TValue&gt;</code>, <code>Queue&lt;T&gt;</code>, <code>Stack&lt;T&gt;</code>, <code>HashSet&lt;T&gt;</code>.</li>
+          <li><strong>Toate colecțiile</strong> implementează <code>IEnumerable&lt;T&gt;</code>, permițând iterația cu <code>foreach</code>.</li>
+          <li><strong>Colecțiile non-generice</strong> (ArrayList, Hashtable) stochează elemente ca <code>object</code>, necesitând cast și având risc de erori la runtime.</li>
+        </ul>
+      </div>
+
+      <div class="subcapitol-card" data-reveal>
+        <h2>List&lt;T&gt;</h2>
+        <p>
+          <span class="highlight">List&lt;T&gt;</span> este o colecție indexată, cu dimensiune dinamică, similară unui array dar mult mai flexibilă. Permite adăugarea, eliminarea, inserarea și căutarea elementelor folosind metode dedicate.
+        </p>
+        <div class="code-block">
+          <span class="comment">// Crearea și popularea unei liste</span><br>
+          <span class="type">List</span>&lt;<span class="type">string</span>&gt; fructe = <span class="keyword">new</span> <span class="type">List</span>&lt;<span class="type">string</span>&gt;();<br><br>
+          <span class="comment">// Adăugare elemente</span><br>
+          fructe.<span class="method">Add</span>(<span class="string">"Mar"</span>);<br>
+          fructe.<span class="method">Add</span>(<span class="string">"Banana"</span>);<br>
+          fructe.<span class="method">Add</span>(<span class="string">"Portocala"</span>);<br><br>
+          <span class="comment">// Inserare la o poziție specifică</span><br>
+          fructe.<span class="method">Insert</span>(1, <span class="string">"Para"</span>);<br><br>
+          <span class="comment">// Eliminare</span><br>
+          fructe.<span class="method">Remove</span>(<span class="string">"Banana"</span>); &nbsp;<span class="comment">// După valoare</span><br>
+          fructe.<span class="method">RemoveAt</span>(0); &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// După index</span><br><br>
+          <span class="comment">// Accesare elemente</span><br>
+          <span class="type">string</span> primulFruct = fructe[0];<br>
+          <span class="type">int</span> numarFructe = fructe.<span class="method">Count</span>;<br><br>
+          <span class="comment">// Căutare</span><br>
+          <span class="type">bool</span> exista = fructe.<span class="method">Contains</span>(<span class="string">"Mar"</span>);<br>
+          <span class="type">int</span> index = fructe.<span class="method">IndexOf</span>(<span class="string">"Portocala"</span>);
+        </div>
+        <ul>
+          <li><strong>Add()</strong> adaugă la sfârșitul listei; <strong>Insert()</strong> adaugă la un index specific, deplasând elementele existente.</li>
+          <li><strong>Remove()</strong> elimină prima apariție a unei valori; <strong>RemoveAt()</strong> elimină după index.</li>
+          <li><strong>Count</strong> returnează numărul curent de elemente (nu capacitatea internă).</li>
+          <li><strong>List&lt;T&gt;</strong> poate fi inițializată direct: <code>var numere = new List&lt;int&gt; { 1, 2, 3, 4, 5 };</code></li>
+        </ul>
+      </div>
+
+      <div class="subcapitol-card" data-reveal>
+        <h2>Dictionary&lt;TKey, TValue&gt;</h2>
+        <p>
+          <span class="highlight">Dictionary&lt;TKey, TValue&gt;</span> este o colecție de perechi cheie-valoare. Fiecare cheie este unică și permite accesul rapid (O(1)) la valoarea asociată. Este ideală pentru căutări rapide și mapări între date.
+        </p>
+        <div class="code-block">
+          <span class="comment">// Crearea unui dicționar</span><br>
+          <span class="type">Dictionary</span>&lt;<span class="type">string</span>, <span class="type">int</span>&gt; varste = <span class="keyword">new</span> <span class="type">Dictionary</span>&lt;<span class="type">string</span>, <span class="type">int</span>&gt;();<br><br>
+          <span class="comment">// Adăugare perechi cheie-valoare</span><br>
+          varste[<span class="string">"Ana"</span>] = 25;<br>
+          varste[<span class="string">"Ion"</span>] = 30;<br>
+          varste.<span class="method">Add</span>(<span class="string">"Maria"</span>, 28);<br><br>
+          <span class="comment">// Accesare valori</span><br>
+          <span class="type">int</span> varstaAnei = varste[<span class="string">"Ana"</span>]; <span class="comment">// 25</span><br><br>
+          <span class="comment">// Verificare existență cheie</span><br>
+          <span class="keyword">if</span> (varste.<span class="method">ContainsKey</span>(<span class="string">"Ion"</span>)) {<br>
+          &nbsp;&nbsp;Console.WriteLine(<span class="string">"Ion exista in dictionar."</span>);<br>
+          }<br><br>
+          <span class="comment">// TryGetValue – acces sigur fără excepții</span><br>
+          <span class="keyword">if</span> (varste.<span class="method">TryGetValue</span>(<span class="string">"Ana"</span>, <span class="keyword">out</span> <span class="type">int</span> rezultat)) {<br>
+          &nbsp;&nbsp;Console.WriteLine(<span class="string">$"Varsta: {rezultat}"</span>);<br>
+          }<br><br>
+          <span class="comment">// Iterare prin dicționar</span><br>
+          <span class="keyword">foreach</span> (<span class="type">KeyValuePair</span>&lt;<span class="type">string</span>, <span class="type">int</span>&gt; pereche <span class="keyword">in</span> varste) {<br>
+          &nbsp;&nbsp;Console.WriteLine(<span class="string">$"{pereche.Key}: {pereche.Value}"</span>);<br>
+          }
+        </div>
+        <ul>
+          <li><strong>Cheile trebuie să fie unice:</strong> adăugarea unei chei duplicate aruncă <code>ArgumentException</code>.</li>
+          <li><strong>Accesul prin index</strong> (<code>dict["cheie"]</code>) aruncă <code>KeyNotFoundException</code> dacă cheia nu există.</li>
+          <li><strong>TryGetValue</strong> este metoda recomandată pentru acces sigur, returnând <code>true/false</code>.</li>
+          <li><strong>Cheile</strong> pot fi orice tip care implementează corect <code>GetHashCode()</code> și <code>Equals()</code>.</li>
+        </ul>
+      </div>
+
+      <div class="subcapitol-card" data-reveal>
+        <h2>Queue&lt;T&gt; și Stack&lt;T&gt;</h2>
+        <p>
+          <span class="highlight">Queue&lt;T&gt;</span> (coada) respectă principiul FIFO (First In, First Out) – primul element adăugat este primul care iese. <span class="highlight">Stack&lt;T&gt;</span> (stiva) respectă principiul LIFO (Last In, First Out) – ultimul element adăugat este primul care iese.
+        </p>
+        <div class="code-block">
+          <span class="comment">// Queue (coadă) – FIFO</span><br>
+          <span class="type">Queue</span>&lt;<span class="type">string</span>&gt; coada = <span class="keyword">new</span> <span class="type">Queue</span>&lt;<span class="type">string</span>&gt;();<br>
+          coada.<span class="method">Enqueue</span>(<span class="string">"Primul"</span>);<br>
+          coada.<span class="method">Enqueue</span>(<span class="string">"Al doilea"</span>);<br>
+          coada.<span class="method">Enqueue</span>(<span class="string">"Al treilea"</span>);<br><br>
+          <span class="type">string</span> scos = coada.<span class="method">Dequeue</span>(); <span class="comment">// "Primul"</span><br>
+          <span class="type">string</span> urmatorul = coada.<span class="method">Peek</span>(); <span class="comment">// "Al doilea" (doar vizualizare)</span><br><br>
+          <span class="comment">// Stack (stivă) – LIFO</span><br>
+          <span class="type">Stack</span>&lt;<span class="type">int</span>&gt; stiva = <span class="keyword">new</span> <span class="type">Stack</span>&lt;<span class="type">int</span>&gt;();<br>
+          stiva.<span class="method">Push</span>(10);<br>
+          stiva.<span class="method">Push</span>(20);<br>
+          stiva.<span class="method">Push</span>(30);<br><br>
+          <span class="type">int</span> extras = stiva.<span class="method">Pop</span>(); <span class="comment">// 30 (ultimul adăugat)</span><br>
+          <span class="type">int</span> varf = stiva.<span class="method">Peek</span>(); &nbsp;<span class="comment">// 20 (doar vizualizare)</span>
+        </div>
+        <ul>
+          <li><strong>Queue:</strong> <code>Enqueue()</code> adaugă la sfârșit, <code>Dequeue()</code> extrage de la început, <code>Peek()</code> vizualizează primul element.</li>
+          <li><strong>Stack:</strong> <code>Push()</code> adaugă în vârf, <code>Pop()</code> extrage din vârf, <code>Peek()</code> vizualizează vârful.</li>
+          <li><strong>Ambele</strong> au proprietatea <code>Count</code> și metoda <code>Clear()</code> pentru golire.</li>
+          <li><strong>Utilizări tipice:</strong> Queue pentru procesare în ordine (printare, mesaje); Stack pentru undo/redo, evaluare expresii.</li>
+        </ul>
+      </div>
+
+      <div class="subcapitol-card" data-reveal>
+        <h2>Tipuri generice (Generics)</h2>
+        <p>
+          <span class="highlight">Genericele</span> permit definirea de clase, metode și interfețe cu parametri de tip. Acestea oferă reutilizare maximă a codului, siguranța tipurilor la compilare și performanță superioară (evită boxing/unboxing-ul).
+        </p>
+        <div class="code-block">
+          <span class="comment">// Clasă generică</span><br>
+          <span class="keyword">class</span> <span class="type">Cutie</span>&lt;<span class="type">T</span>&gt; {<br>
+          &nbsp;&nbsp;<span class="keyword">public</span> <span class="type">T</span> Continut { <span class="keyword">get</span>; <span class="keyword">set</span>; }<br><br>
+          &nbsp;&nbsp;<span class="keyword">public void</span> <span class="method">AfiseazaContinut</span>() {<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;Console.WriteLine(<span class="string">$"Continut: {Continut}"</span>);<br>
+          &nbsp;&nbsp;}<br>
+          }<br><br>
+          <span class="comment">// Utilizare cu tipuri diferite</span><br>
+          <span class="type">Cutie</span>&lt;<span class="type">int</span>&gt; cutieNumere = <span class="keyword">new</span> <span class="type">Cutie</span>&lt;<span class="type">int</span>&gt;();<br>
+          cutieNumere.Continut = 42;<br><br>
+          <span class="type">Cutie</span>&lt;<span class="type">string</span>&gt; cutieText = <span class="keyword">new</span> <span class="type">Cutie</span>&lt;<span class="type">string</span>&gt;();<br>
+          cutieText.Continut = <span class="string">"Hello generice!"</span>;
+        </div>
+        <div class="code-block">
+          <span class="comment">// Constrângeri pe tipuri generice</span><br>
+          <span class="keyword">class</span> <span class="type">Repository</span>&lt;<span class="type">T</span>&gt; <span class="keyword">where</span> <span class="type">T</span> : <span class="keyword">class</span> {<br>
+          &nbsp;&nbsp;<span class="comment">// T trebuie să fie un tip referință (clasă)</span><br>
+          }<br><br>
+          <span class="keyword">class</span> <span class="type">Comparabil</span>&lt;<span class="type">T</span>&gt; <span class="keyword">where</span> <span class="type">T</span> : <span class="type">IComparable</span>&lt;<span class="type">T</span>&gt; {<br>
+          &nbsp;&nbsp;<span class="comment">// T trebuie să implementeze IComparable</span><br>
+          }<br><br>
+          <span class="comment">// Metodă generică</span><br>
+          <span class="keyword">static void</span> <span class="method">Swap</span>&lt;<span class="type">T</span>&gt;(<span class="keyword">ref</span> <span class="type">T</span> a, <span class="keyword">ref</span> <span class="type">T</span> b) {<br>
+          &nbsp;&nbsp;<span class="type">T</span> temp = a;<br>
+          &nbsp;&nbsp;a = b;<br>
+          &nbsp;&nbsp;b = temp;<br>
+          }
+        </div>
+        <ul>
+          <li><strong>Parametrii de tip</strong> sunt specificați între <code>&lt; &gt;</code>; prin convenție se folosesc <code>T</code>, <code>TKey</code>, <code>TValue</code>.</li>
+          <li><strong>Constrângerile</strong> (<code>where T : ...</code>) restricționează tipurile acceptate: <code>class</code>, <code>struct</code>, <code>new()</code>, clase de bază, interfețe.</li>
+          <li><strong>Avantaje:</strong> reutilizare fără duplicare de cod, siguranța tipurilor, performanță (fără boxing).</li>
+          <li><strong>Colecțiile generice</strong> (<code>List&lt;T&gt;</code>, <code>Dictionary&lt;TKey,TValue&gt;</code>) sunt implementate folosind generice.</li>
+        </ul>
+      </div>
+
+      <div class="subcapitol-card" data-reveal>
+        <h2>IEnumerable&lt;T&gt; și iterația</h2>
+        <p>
+          <span class="highlight">IEnumerable&lt;T&gt;</span> este interfața fundamentală pentru iterație în .NET. Orice colecție care o implementează poate fi parcursă cu <code>foreach</code>. Aceasta definește metoda <code>GetEnumerator()</code> care returnează un obiect <code>IEnumerator&lt;T&gt;</code>.
+        </p>
+        <div class="code-block">
+          <span class="comment">// IEnumerable permite iterare cu foreach</span><br>
+          <span class="type">IEnumerable</span>&lt;<span class="type">int</span>&gt; numere = <span class="keyword">new</span> <span class="type">List</span>&lt;<span class="type">int</span>&gt; { 1, 2, 3, 4, 5 };<br><br>
+          <span class="keyword">foreach</span> (<span class="type">int</span> numar <span class="keyword">in</span> numere) {<br>
+          &nbsp;&nbsp;Console.WriteLine(numar);<br>
+          }<br><br>
+          <span class="comment">// Implementare personalizată IEnumerable</span><br>
+          <span class="keyword">class</span> <span class="type">NumerePare</span> : <span class="type">IEnumerable</span>&lt;<span class="type">int</span>&gt; {<br>
+          &nbsp;&nbsp;<span class="keyword">private int</span> maxim;<br>
+          &nbsp;&nbsp;<span class="keyword">public</span> <span class="method">NumerePare</span>(<span class="type">int</span> maxim) { <span class="keyword">this</span>.maxim = maxim; }<br><br>
+          &nbsp;&nbsp;<span class="keyword">public</span> <span class="type">IEnumerator</span>&lt;<span class="type">int</span>&gt; <span class="method">GetEnumerator</span>() {<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">for</span> (<span class="type">int</span> i = 0; i &lt;= maxim; i += 2) {<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">yield return</span> i;<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+          &nbsp;&nbsp;}<br>
+          }
+        </div>
+        <ul>
+          <li><strong>IEnumerable&lt;T&gt;</strong> permite doar iterare forward, fără a modifica colecția în timpul iterației.</li>
+          <li><strong>yield return</strong> simplifică crearea de iteratori, returnând câte un element pe rând fără a construi o colecție completă.</li>
+          <li><strong>LINQ</strong> se bazează pe <code>IEnumerable&lt;T&gt;</code>, oferind metode de extensie precum <code>Where()</code>, <code>Select()</code>, <code>OrderBy()</code>.</li>
+          <li><strong>Deferred execution:</strong> interogările pe <code>IEnumerable&lt;T&gt;</code> nu se execută până la iterația efectivă (ex: cu <code>foreach</code> sau <code>ToList()</code>).</li>
+        </ul>
+      </div>
+
+      <div class="chapter-nav">
+        <a href="6.html" class="nav-btn prev">Capitolul 6</a>
+        <a href="../capitole.html" class="back-to-chapters">Inapoi la toate capitolele</a>
+        <a href="8.html" class="nav-btn next">Capitolul 8</a>
+      </div>
+
+      <p class="chapter-footer">
+        Capitolul 7 din 10 - made with love by <strong>Amalia</strong>
+      </p>
+    </div>
+  </main>
+
+  <script>
+    (function() {
+      const hamburger = document.querySelector('.hamburger');
+      const navMenu = document.querySelector('.nav-menu');
+      
+      function toggleMenu() {
+        hamburger.classList.toggle('active');
+        navMenu.classList.toggle('active');
+      }
+      
+      hamburger.addEventListener('click', toggleMenu);
+      
+      document.querySelectorAll('.nav-link').forEach(link => {
+        link.addEventListener('click', () => {
+          if (navMenu.classList.contains('active')) {
+            hamburger.classList.remove('active');
+            navMenu.classList.remove('active');
+          }
+        });
+      });
+      
+      document.addEventListener('click', (e) => {
+        if (navMenu.classList.contains('active') && !e.target.closest('nav') && !e.target.closest('.hamburger')) {
+          hamburger.classList.remove('active');
+          navMenu.classList.remove('active');
+        }
+      });
+      
+      hamburger.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          toggleMenu();
+        }
+      });
+      
+      function revealSubcapitole() {
+        const cards = document.querySelectorAll('.subcapitol-card[data-reveal]');
+        const windowHeight = window.innerHeight;
+        
+        cards.forEach(card => {
+          const rect = card.getBoundingClientRect();
+          if (rect.top < windowHeight - 80 && !card.classList.contains('reveal')) {
+            requestAnimationFrame(() => {
+              card.classList.add('reveal');
+            });
+          }
+        });
+      }
+      
+      window.addEventListener('scroll', revealSubcapitole, { passive: true });
+      window.addEventListener('load', () => {
+        setTimeout(revealSubcapitole, 150);
+      });
+      revealSubcapitole();
+    })();
+  </script>
+</body>
+</html>
