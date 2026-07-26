@@ -14,6 +14,11 @@
       box-sizing: border-box;
     }
 
+    html {
+      overflow-x: hidden;
+      width: 100%;
+    }
+
     body {
       font-family: 'Inter', 'Segoe UI', sans-serif;
       line-height: 1.6;
@@ -21,6 +26,9 @@
       background-color: #F7ECE1;
       min-height: 100vh;
       overflow-x: hidden;
+      width: 100%;
+      max-width: 100vw;
+      position: relative;
     }
 
     a, .nav-link, .bar, .highlight, .chapter-card, .sub-item {
@@ -35,6 +43,7 @@
       position: sticky;
       top: 0;
       z-index: 1000;
+      width: 100%;
     }
 
     .navbar {
@@ -45,6 +54,7 @@
       padding: 0 32px;
       max-width: 1280px;
       margin: 0 auto;
+      width: 100%;
     }
 
     .nav-branding {
@@ -56,6 +66,7 @@
       transition: 0.3s;
       text-decoration: none;
       position: relative;
+      z-index: 1001;
     }
     .nav-branding::after {
       content: '';
@@ -91,6 +102,7 @@
       padding: 6px 0;
       position: relative;
       border-bottom: 2px solid transparent;
+      white-space: nowrap;
     }
     .nav-link::after {
       content: '';
@@ -116,6 +128,8 @@
       flex-direction: column;
       gap: 5px;
       padding: 6px 4px;
+      z-index: 1001;
+      position: relative;
     }
     .bar {
       display: block;
@@ -128,16 +142,17 @@
     }
 
     @media (max-width: 768px) {
-      .hamburger {
-        display: flex;
-      }
+      .navbar { padding: 0 20px; min-height: 70px; }
+      .nav-branding { font-size: 1.8rem; }
+      .hamburger { display: flex; }
       .nav-menu {
         position: fixed;
         left: -100%;
-        top: 76px;
+        top: 70px;
         flex-direction: column;
         background: linear-gradient(160deg, #CAC4CE 0%, #8D86C9 100%);
         width: 100%;
+        max-width: 100vw;
         padding: 28px 0;
         gap: 24px;
         box-shadow: 0 18px 40px rgba(114, 90, 193, 0.2);
@@ -145,31 +160,28 @@
         backdrop-filter: blur(6px);
         border-top: 1px solid rgba(255, 238, 221, 0.25);
       }
-      .nav-menu.active {
-        left: 0;
-      }
-      .nav-item {
-        margin: 0;
-      }
-      .nav-link {
-        font-size: 1.2rem;
-      }
-      .hamburger.active .bar:nth-child(1) {
-        transform: translateY(8px) rotate(45deg);
-      }
-      .hamburger.active .bar:nth-child(2) {
-        opacity: 0;
-        transform: scaleX(0);
-      }
-      .hamburger.active .bar:nth-child(3) {
-        transform: translateY(-8px) rotate(-45deg);
-      }
+      .nav-menu.active { left: 0; }
+      .nav-item { margin: 0; width: 100%; text-align: center; }
+      .nav-link { font-size: 1.2rem; display: block; width: 100%; }
+      .hamburger.active .bar:nth-child(1) { transform: translateY(8px) rotate(45deg); }
+      .hamburger.active .bar:nth-child(2) { opacity: 0; transform: scaleX(0); }
+      .hamburger.active .bar:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
+    }
+
+    @media (max-width: 480px) {
+      .navbar { padding: 0 16px; min-height: 64px; }
+      .nav-branding { font-size: 1.6rem; }
+      .nav-menu { top: 64px; }
     }
 
     .container {
       max-width: 1100px;
       margin: 0 auto;
       padding: 32px 24px;
+      width: 100%;
+      overflow-wrap: break-word;
+      word-wrap: break-word;
+      word-break: break-word;
     }
 
     .page-title {
@@ -183,7 +195,7 @@
       animation: fadeSlide 0.8s ease forwards;
     }
     .page-title::before {
-      content: '📖 ';
+      content: '\1F4D6 ';
       font-size: 2.2rem;
     }
 
@@ -210,17 +222,8 @@
       animation: cardEntry 0.7s ease forwards;
       opacity: 0;
       transform: translateY(20px);
+      width: 100%;
     }
-    .chapter-card:nth-child(1) { animation-delay: 0.05s; }
-    .chapter-card:nth-child(2) { animation-delay: 0.12s; }
-    .chapter-card:nth-child(3) { animation-delay: 0.19s; }
-    .chapter-card:nth-child(4) { animation-delay: 0.26s; }
-    .chapter-card:nth-child(5) { animation-delay: 0.33s; }
-    .chapter-card:nth-child(6) { animation-delay: 0.40s; }
-    .chapter-card:nth-child(7) { animation-delay: 0.47s; }
-    .chapter-card:nth-child(8) { animation-delay: 0.54s; }
-    .chapter-card:nth-child(9) { animation-delay: 0.61s; }
-    .chapter-card:nth-child(10) { animation-delay: 0.68s; }
 
     @keyframes cardEntry {
       0% { opacity: 0; transform: translateY(28px); }
@@ -269,6 +272,16 @@
       transform: translateX(4px);
     }
 
+    .chapter-title-link.unavailable {
+      color: #CAC4CE;
+      cursor: pointer;
+      position: relative;
+    }
+    .chapter-title-link.unavailable:hover {
+      color: #8D86C9;
+      transform: translateX(4px);
+    }
+
     .chapter-desc {
       font-size: 0.98rem;
       color: #4b4752;
@@ -276,6 +289,7 @@
       padding-left: 8px;
       border-left: 3px solid #CAC4CE;
       padding-left: 16px;
+      word-break: break-word;
     }
 
     .sub-list {
@@ -302,9 +316,10 @@
       transition: 0.25s ease;
       cursor: pointer;
       position: relative;
+      white-space: nowrap;
     }
     .sub-item::before {
-      content: '▹';
+      content: '\25B9';
       color: #8D86C9;
       font-size: 1.1rem;
       transition: 0.25s;
@@ -341,7 +356,7 @@
       box-shadow: 0 10px 28px rgba(114, 90, 193, 0.15);
     }
     .back-link::before {
-      content: '← ';
+      content: '\2190 ';
       font-size: 1.2rem;
     }
 
@@ -350,7 +365,6 @@
       background: #725AC1;
     }
 
-    /* Toast definition pop-up */
     .definition-toast {
       position: fixed;
       bottom: 30px;
@@ -374,10 +388,122 @@
       max-width: 90vw;
       text-align: center;
       line-height: 1.4;
+      word-break: break-word;
     }
     .definition-toast.show {
       opacity: 1;
       transform: translateX(-50%) translateY(0);
+    }
+
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(44, 42, 47, 0.7);
+      backdrop-filter: blur(4px);
+      z-index: 10000;
+      justify-content: center;
+      align-items: center;
+    }
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal-dialog {
+      background: #F7ECE1;
+      border-radius: 28px;
+      padding: 32px;
+      max-width: 480px;
+      width: 90%;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(114, 90, 193, 0.3);
+      animation: modalEntry 0.4s ease forwards;
+      border: 2px solid rgba(202, 196, 206, 0.4);
+    }
+
+    @keyframes modalEntry {
+      0% { opacity: 0; transform: scale(0.9) translateY(20px); }
+      100% { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    .modal-icon {
+      font-size: 3rem;
+      margin-bottom: 12px;
+    }
+    .modal-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: #725AC1;
+      margin-bottom: 8px;
+    }
+    .modal-message {
+      font-size: 1rem;
+      color: #4b4752;
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+    .modal-chapter-name {
+      font-weight: 600;
+      color: #8D86C9;
+      background: rgba(202, 196, 206, 0.2);
+      padding: 4px 16px;
+      border-radius: 40px;
+      display: inline-block;
+      margin: 8px 0;
+    }
+    .modal-btn {
+      display: inline-block;
+      padding: 14px 32px;
+      background: linear-gradient(135deg, #CAC4CE, #8D86C9);
+      color: #F7ECE1;
+      border-radius: 60px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 1rem;
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 6px 20px rgba(114, 90, 193, 0.2);
+    }
+    .modal-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 32px rgba(114, 90, 193, 0.3);
+      background: linear-gradient(135deg, #8D86C9, #725AC1);
+    }
+    .modal-btn::before {
+      content: '\2190 ';
+      font-size: 1.1rem;
+    }
+    .modal-close {
+      position: absolute;
+      top: 16px;
+      right: 20px;
+      background: none;
+      border: none;
+      font-size: 1.8rem;
+      cursor: pointer;
+      color: #CAC4CE;
+      transition: 0.2s;
+      line-height: 1;
+    }
+    .modal-close:hover {
+      color: #725AC1;
+      transform: scale(1.2);
+    }
+
+    @media (max-width: 768px) {
+      .container { padding: 24px 20px; }
+      .page-title { font-size: 2.2rem; }
+      .chapter-card { padding: 20px 22px 24px; border-radius: 28px; }
+      .chapter-title-link { font-size: 1.4rem; }
+      .chapter-nr { font-size: 1.4rem; }
+      .sub-item { font-size: 0.9rem; padding: 7px 16px; }
+      .sub-list { gap: 8px 12px; }
+      .modal-dialog { padding: 24px; }
+      .modal-title { font-size: 1.3rem; }
     }
 
     @media (max-width: 600px) {
@@ -385,7 +511,7 @@
       .nav-branding { font-size: 1.8rem; }
       .container { padding: 20px 16px; }
       .page-title { font-size: 2rem; }
-      .chapter-card { padding: 18px 18px 22px; }
+      .chapter-card { padding: 18px 18px 22px; border-radius: 24px; }
       .chapter-title-link { font-size: 1.3rem; }
       .chapter-nr { font-size: 1.3rem; }
       .sub-item { font-size: 0.85rem; padding: 6px 14px; }
@@ -397,7 +523,19 @@
       }
     }
 
-    a:focus-visible, .sub-item:focus-visible, .chapter-title-link:focus-visible {
+    @media (max-width: 400px) {
+      .container { padding: 16px 12px; }
+      .page-title { font-size: 1.7rem; }
+      .chapter-card { padding: 16px 14px 18px; border-radius: 20px; }
+      .chapter-title-link { font-size: 1.15rem; }
+      .chapter-nr { font-size: 1.1rem; }
+      .sub-item { font-size: 0.8rem; padding: 5px 12px; }
+      .modal-dialog { padding: 20px 16px; }
+      .modal-title { font-size: 1.2rem; }
+      .modal-btn { padding: 12px 24px; font-size: 0.9rem; }
+    }
+
+    a:focus-visible, .sub-item:focus-visible, .chapter-title-link:focus-visible, .modal-btn:focus-visible {
       outline: 3px solid #8D86C9;
       outline-offset: 4px;
       border-radius: 40px;
@@ -426,171 +564,577 @@
       <h1 class="page-title">Toate capitolele C#</h1>
 
       <div class="chapters-grid" id="chaptersGrid">
-        <!-- capitolele sunt generate din JavaScript -->
       </div>
 
-      <a href="index.html" class="back-link">Înapoi la Acasă</a>
+      <a href="index.html" class="back-link">Inapoi la Acasa</a>
     </div>
   </main>
 
+  <div class="modal-overlay" id="unavailableModal">
+    <div class="modal-dialog">
+      <div class="modal-icon">&#128218;</div>
+      <div class="modal-title">Capitol indisponibil</div>
+      <div class="modal-message">
+        Capitolul <span class="modal-chapter-name" id="modalChapterName"></span> nu a fost inca realizat.
+        <br>Reveniti mai tarziu pentru continut complet.
+      </div>
+      <a href="capitole.html" class="modal-btn">Inapoi la capitole</a>
+    </div>
+  </div>
+
   <script>
     (function() {
-      // ----- Definirea capitolelor (titlurile coincid cu numele fișierelor HTML) -----
       const chaptersData = [
         {
           nr: "01",
-          title: "Introducere în C# și .NET",
+          title: "Introducere in C# si .NET",
           file: "1.html",
-          desc: "Bazele platformei, istoric, instalare și primul program „Hello World”.",
+          desc: "Bazele platformei, istoric, instalare si primul program Hello World.",
           subchapters: [
-            { label: "Ce este .NET?", definition: "Platformă software gratuită, open-source, pentru construirea de aplicații moderne. Oferă runtime, biblioteci și compilatoare." },
-            { label: "Instalare SDK", definition: "Set de instrumente care include compilatorul C#, runtime-ul .NET și bibliotecile necesare pentru dezvoltare." },
-            { label: "Primul program", definition: "Creați o aplicație consolă simplă care afișează „Hello World!” pentru a verifica mediul de lucru." },
-            { label: "Structura soluției", definition: "Organizarea proiectelor C# în soluții, cu fișiere .csproj, foldere și dependențe." }
+            { label: "Ce este .NET?", definition: "Platforma software gratuita, open-source, pentru construirea de aplicatii moderne. Ofera runtime, biblioteci si compilatoare." },
+            { label: "Instalare SDK", definition: "Set de instrumente care include compilatorul C#, runtime-ul .NET si bibliotecile necesare pentru dezvoltare." },
+            { label: "Primul program", definition: "Creati o aplicatie consola simpla care afiseaza Hello World pentru a verifica mediul de lucru." },
+            { label: "Structura solutiei", definition: "Organizarea proiectelor C# in solutii, cu fisiere .csproj, foldere si dependente." }
           ]
         },
         {
           nr: "02",
-          title: "Sintaxa de bază",
+          title: "Sintaxa de baza",
           file: "2.html",
-          desc: "Variabile, tipuri de date, operatori, conversii și citirea de la tastatură.",
+          desc: "Variabile, tipuri de date, operatori, conversii si citirea de la tastatura.",
           subchapters: [
-            { label: "Variabile și constante", definition: "Spații de memorie numite care stochează date; constantele (const) nu pot fi modificate după inițializare." },
-            { label: "Tipuri de date", definition: "int, double, char, string, bool – definesc natura valorilor și operațiile permise asupra lor." },
-            { label: "Operatori", definition: "Simboluri care efectuează operații: aritmetici (+, -), relaționali (==, <) și logici (&&, ||)." },
-            { label: "Conversii", definition: "Transformarea unei valori dintr-un tip în altul: implicită (fără pierderi) sau explicită (cast)." },
-            { label: "Citire / scriere", definition: "Console.ReadLine() și Console.WriteLine() pentru interacțiunea cu utilizatorul în consolă." }
+            { label: "Variabile si constante", definition: "Spatii de memorie numite care stocheaza date; constantele (const) nu pot fi modificate dupa initializare." },
+            { label: "Tipuri de date", definition: "int, double, char, string, bool – definesc natura valorilor si operatiile permise asupra lor." },
+            { label: "Operatori", definition: "Simboluri care efectueaza operatii: aritmetici (+, -), relationali (==, <) si logici (&&, ||)." },
+            { label: "Conversii", definition: "Transformarea unei valori dintr-un tip in altul: implicita (fara pierderi) sau explicita (cast)." },
+            { label: "Citire / scriere", definition: "Console.ReadLine() si Console.WriteLine() pentru interactiunea cu utilizatorul in consola." }
           ]
         },
         {
           nr: "03",
-          title: "Instrucțiuni de control",
+          title: "Instructiuni de control",
           file: "3.html",
-          desc: "Decizii, bucle și salturi – fluxul execuției în C#.",
+          desc: "Decizii, bucle si salturi – fluxul executiei in C#.",
           subchapters: [
-            { label: "if / else", definition: "Execută un bloc de cod doar dacă o condiție booleană este adevărată; else oferă o ramură alternativă." },
-            { label: "switch", definition: "Selectează o ramură de execuție pe baza valorii unei expresii, util pentru mai multe cazuri fixe." },
-            { label: "for / foreach", definition: "for: buclă cu contor; foreach: iterează prin fiecare element al unei colecții fără a folosi un index." },
-            { label: "while / do-while", definition: "while evaluează condiția înainte de fiecare iterație; do-while execută corpul cel puțin o dată." },
-            { label: "break / continue", definition: "break iese imediat din buclă; continue trece la următoarea iterație, sărind peste restul codului." }
+            { label: "if / else", definition: "Executa un bloc de cod doar daca o conditie booleana este adevarata; else ofera o ramura alternativa." },
+            { label: "switch", definition: "Selecteaza o ramura de executie pe baza valorii unei expresii, util pentru mai multe cazuri fixe." },
+            { label: "for / foreach", definition: "for: bucla cu contor; foreach: itereaza prin fiecare element al unei colectii fara a folosi un index." },
+            { label: "while / do-while", definition: "while evalueaza conditia inainte de fiecare iteratie; do-while executa corpul cel putin o data." },
+            { label: "break / continue", definition: "break iese imediat din bucla; continue trece la urmatoarea iteratie, sarind peste restul codului." }
           ]
         },
         {
           nr: "04",
-          title: "Metode și funcții",
+          title: "Metode si functii",
           file: "4.html",
-          desc: "Declarare, parametri, return, supraîncărcare și metode statice.",
+          desc: "Declarare, parametri, return, supraincarcare si metode statice.",
           subchapters: [
-            { label: "Declarare metode", definition: "Bloc de cod cu un nume, care poate fi apelat; definit cu tip returnat, nume și parametri opționali." },
-            { label: "Parametri", definition: "Valori transmise metodei la apel; pot fi by value, reference (ref) sau de ieșire (out)." },
-            { label: "Return", definition: "Instrucțiunea care trimite o valoare înapoi către apelant și încheie execuția metodei." },
-            { label: "Overloading", definition: "Mai multe metode cu același nume dar parametri diferiți (număr, tip sau ordine)." },
-            { label: "Metode statice", definition: "Metode care aparțin clasei, nu unei instanțe; se apelează cu numele clasei (ex: Math.Sqrt)." }
+            { label: "Declarare metode", definition: "Bloc de cod cu un nume, care poate fi apelat; definit cu tip returnat, nume si parametri optionali." },
+            { label: "Parametri", definition: "Valori transmise metodei la apel; pot fi by value, reference (ref) sau de iesire (out)." },
+            { label: "Return", definition: "Instructiunea care trimite o valoare inapoi catre apelant si incheie executia metodei." },
+            { label: "Overloading", definition: "Mai multe metode cu acelasi nume dar parametri diferiti (numar, tip sau ordine)." },
+            { label: "Metode statice", definition: "Metode care apartin clasei, nu unei instante; se apeleaza cu numele clasei (ex: Math.Sqrt)." }
           ]
         },
         {
           nr: "05",
-          title: "OOP – clase și obiecte",
+          title: "OOP – clase si obiecte",
           file: "5.html",
-          desc: "Fundamentele programării orientate pe obiecte în C#.",
+          desc: "Fundamentele programarii orientate pe obiecte in C#.",
           subchapters: [
-            { label: "Clase și obiecte", definition: "Clasa este un șablon; obiectul este o instanță a clasei, cu stare și comportament propriu." },
-            { label: "Câmpuri și proprietăți", definition: "Câmpurile stochează date; proprietățile (get/set) oferă acces controlat la aceste date." },
-            { label: "Constructori", definition: "Metode speciale apelate la crearea unui obiect, utilizate pentru inițializarea membrilor." },
-            { label: "this / static", definition: "this se referă la instanța curentă; static indică un membru care aparține clasei, nu unei instanțe." },
-            { label: "Destructori", definition: "Metodă numită ~ClassName(), apelată automat de garbage collector pentru curățenie (rar folosită)." }
+            { label: "Clase si obiecte", definition: "Clasa este un sablon; obiectul este o instanta a clasei, cu stare si comportament propriu." },
+            { label: "Campuri si proprietati", definition: "Campurile stocheaza date; proprietatile (get/set) ofera acces controlat la aceste date." },
+            { label: "Constructori", definition: "Metode speciale apelate la crearea unui obiect, utilizate pentru initializarea membrilor." },
+            { label: "this / static", definition: "this se refera la instanta curenta; static indica un membru care apartine clasei, nu unei instante." },
+            { label: "Destructori", definition: "Metoda numita ~ClassName(), apelata automat de garbage collector pentru curatenie (rar folosita)." }
           ]
         },
         {
           nr: "06",
-          title: "Moștenire și polimorfism",
+          title: "Mostenire si polimorfism",
           file: "6.html",
-          desc: "Extinderea claselor, suprascrierea metodelor și interfețe.",
+          desc: "Extinderea claselor, suprascrierea metodelor si interfete.",
           subchapters: [
-            { label: "Moștenire", definition: "O clasă derivată preia membrii unei clase de bază, permițând reutilizarea și extinderea codului." },
-            { label: "base / override", definition: "base accesează membrii clasei părinte; override modifică o metodă virtuală în clasa derivată." },
-            { label: "Polimorfism", definition: "Capacitatea unui obiect de a lua mai multe forme, prin metode virtuale și referințe de tipul de bază." },
-            { label: "Clase abstracte", definition: "Clase care nu pot fi instanțiate direct; pot conține metode abstracte fără implementare." },
-            { label: "Interfețe", definition: "Contracte care definesc semnături de metode și proprietăți; o clasă poate implementa mai multe interfețe." }
+            { label: "Mostenire", definition: "O clasa derivata preia membrii unei clase de baza, permitand reutilizarea si extinderea codului." },
+            { label: "base / override", definition: "base acceseaza membrii clasei parinte; override modifica o metoda virtuala in clasa derivata." },
+            { label: "Polimorfism", definition: "Capacitatea unui obiect de a lua mai multe forme, prin metode virtuale si referinte de tipul de baza." },
+            { label: "Clase abstracte", definition: "Clase care nu pot fi instantiate direct; pot contine metode abstracte fara implementare." },
+            { label: "Interfete", definition: "Contracte care definesc semnaturi de metode si proprietati; o clasa poate implementa mai multe interfete." }
           ]
         },
         {
           nr: "07",
-          title: "Colecții și generice",
+          title: "Colectii si generice",
           file: "7.html",
-          desc: "Liste, dicționare, cozi, stive și tipuri generice.",
+          desc: "Liste, dictionare, cozi, stive si tipuri generice.",
           subchapters: [
-            { label: "List<T>", definition: "Colecție dinamică, indexată, care permite adăugarea, eliminarea și căutarea rapidă a elementelor." },
-            { label: "Dictionary<TKey,TValue>", definition: "Colecție de perechi cheie-valoare, cu acces rapid la valori pe baza unei chei unice." },
-            { label: "Queue / Stack", definition: "Queue: primul intrat, primul ieșit (FIFO); Stack: ultimul intrat, primul ieșit (LIFO)." },
-            { label: "Generice", definition: "Mecanism care permite definirea de clase/metode cu tipuri parametrizate, asigurând siguranța tipurilor." },
-            { label: "IEnumerable", definition: "Interfață de bază pentru iterație; permite parcurgerea unei colecții cu foreach." }
+            { label: "List<T>", definition: "Colectie dinamica, indexata, care permite adaugarea, eliminarea si cautarea rapida a elementelor." },
+            { label: "Dictionary<TKey,TValue>", definition: "Colectie de perechi cheie-valoare, cu acces rapid la valori pe baza unei chei unice." },
+            { label: "Queue / Stack", definition: "Queue: primul intrat, primul iesit (FIFO); Stack: ultimul intrat, primul iesit (LIFO)." },
+            { label: "Generice", definition: "Mecanism care permite definirea de clase/metode cu tipuri parametrizate, asigurand siguranta tipurilor." },
+            { label: "IEnumerable", definition: "Interfata de baza pentru iteratie; permite parcurgerea unei colectii cu foreach." }
           ]
         },
         {
           nr: "08",
-          title: "Gestionarea excepțiilor",
+          title: "Gestionarea exceptiilor",
           file: "8.html",
-          desc: "Try-catch-finally, aruncarea și capturarea erorilor.",
+          desc: "Try-catch-finally, aruncarea si capturarea erorilor.",
           subchapters: [
-            { label: "try / catch", definition: "try înconjoară codul care poate arunca o excepție; catch prinde și tratează eroarea specifică." },
-            { label: "finally", definition: "Bloc opțional care se execută întotdeauna, indiferent dacă a apărut sau nu o excepție." },
-            { label: "throw", definition: "Aruncă o excepție (predefinită sau personalizată) pentru a semnala o condiție de eroare." },
-            { label: "Excepții personalizate", definition: "Clase derivate din Exception, create pentru a reprezenta erori specifice aplicației." }
+            { label: "try / catch", definition: "try inconjoara codul care poate arunca o exceptie; catch prinde si trateaza eroarea specifica." },
+            { label: "finally", definition: "Bloc optional care se executa intotdeauna, indiferent daca a aparut sau nu o exceptie." },
+            { label: "throw", definition: "Arunca o exceptie (predefinita sau personalizata) pentru a semnala o conditie de eroare." },
+            { label: "Exceptii personalizate", definition: "Clase derivate din Exception, create pentru a reprezenta erori specifice aplicatiei." }
           ]
         },
         {
           nr: "09",
-          title: "LINQ și expresii lambda",
+          title: "LINQ si expresii lambda",
           file: "9.html",
-          desc: "Interogarea datelor, filtrări, proiecții și funcții anonime.",
+          desc: "Interogarea datelor, filtrari, proiectii si functii anonime.",
           subchapters: [
-            { label: "Sintaxa LINQ", definition: "Language Integrated Query – interogări asemănătoare SQL direct în C#, pe colecții sau baze de date." },
-            { label: "Where / Select", definition: "Where filtrează elementele pe baza unei condiții; Select proiectează fiecare element într-o formă nouă." },
-            { label: "OrderBy / GroupBy", definition: "OrderBy sortează elementele; GroupBy le grupează după o cheie comună." },
-            { label: "Lambda expressions", definition: "Funcții anonime concise (ex: x => x > 5) folosite intens în LINQ și delegate." },
-            { label: "Deferred execution", definition: "Interogările LINQ nu se execută până când nu sunt iterale efectiv (ex: cu ToList() sau foreach)." }
+            { label: "Sintaxa LINQ", definition: "Language Integrated Query – interogari asemanatoare SQL direct in C#, pe colectii sau baze de date." },
+            { label: "Where / Select", definition: "Where filtreaza elementele pe baza unei conditii; Select proiecteaza fiecare element intr-o forma noua." },
+            { label: "OrderBy / GroupBy", definition: "OrderBy sorteaza elementele; GroupBy le grupeaza dupa o cheie comuna." },
+            { label: "Lambda expressions", definition: "Functii anonime concise (ex: x => x > 5) folosite intens in LINQ si delegate." },
+            { label: "Deferred execution", definition: "Interogarile LINQ nu se executa pana cand nu sunt iterate efectiv (ex: cu ToList() sau foreach)." }
           ]
         },
         {
           nr: "10",
-          title: "Programare asincronă",
+          title: "Programare asincrona",
           file: "10.html",
-          desc: "async / await, Task, paralelism și operații I/O.",
+          desc: "async / await, Task, paralelism si operatii I/O.",
           subchapters: [
-            { label: "async / await", definition: "async marchează o metodă asincronă; await suspendă execuția până la finalizarea unui Task, fără a bloca thread-ul." },
-            { label: "Task & Task<T>", definition: "Task reprezintă o operație asincronă fără rezultat; Task<T> returnează o valoare la finalizare." },
-            { label: "Parallel.For", definition: "Execută iterațiile unei bucle în paralel, pe mai multe thread-uri, pentru operații independente." },
-            { label: "CancelationToken", definition: "Mecanism de anulare cooperativă a unei sarcini asincrone, folosind CancellationTokenSource." }
+            { label: "async / await", definition: "async marcheaza o metoda asincrona; await suspenda executia pana la finalizarea unui Task, fara a bloca thread-ul." },
+            { label: "Task & Task<T>", definition: "Task reprezinta o operatie asincrona fara rezultat; Task<T> returneaza o valoare la finalizare." },
+            { label: "Parallel.For", definition: "Executa iteratiile unei bucle in paralel, pe mai multe thread-uri, pentru operatii independente." },
+            { label: "CancelationToken", definition: "Mecanism de anulare cooperativa a unei sarcini asincrone, folosind CancellationTokenSource." }
+          ]
+        },
+        {
+          nr: "11",
+          title: "Clase si obiecte",
+          file: "11.html",
+          desc: "Definirea claselor, crearea obiectelor si lucrul cu membrii acestora.",
+          subchapters: [
+            { label: "Definirea unei clase", definition: "O clasa este un tip de referinta care defineste structura si comportamentul obiectelor." },
+            { label: "Instantierea obiectelor", definition: "Crearea unei instante a clasei folosind operatorul new si apelarea constructorului." },
+            { label: "Membri de instanta", definition: "Campuri, proprietati si metode care apartin fiecarui obiect in parte." },
+            { label: "Membri statici", definition: "Membri care apartin clasei insasi, nu unei instante, si sunt partajati de toate obiectele." }
+          ]
+        },
+        {
+          nr: "12",
+          title: "Constructori si destructori",
+          file: "12.html",
+          desc: "Initializarea obiectelor si eliberarea resurselor in C#.",
+          subchapters: [
+            { label: "Constructor implicit", definition: "Constructorul fara parametri, generat automat daca nu se defineste niciun constructor." },
+            { label: "Constructor cu parametri", definition: "Permite initializarea campurilor obiectului la momentul crearii, cu valori transmise ca argumente." },
+            { label: "Supraincarcarea constructorilor", definition: "Mai multi constructori cu parametri diferiti, oferind mai multe moduri de initializare." },
+            { label: "Destructorul", definition: "Metoda ~ClassName() apelata de garbage collector; utila doar pentru eliberarea resurselor unmanaged." }
+          ]
+        },
+        {
+          nr: "13",
+          title: "Modificatori de acces",
+          file: "13.html",
+          desc: "Controlul vizibilitatii membrilor unei clase.",
+          subchapters: [
+            { label: "public", definition: "Membrul este accesibil din orice cod, fara restrictii." },
+            { label: "private", definition: "Membrul este accesibil doar din interiorul clasei in care este definit." },
+            { label: "protected", definition: "Membrul este accesibil in clasa curenta si in clasele derivate din aceasta." },
+            { label: "internal", definition: "Membrul este accesibil doar in cadrul aceluiasi assembly (proiect)." }
+          ]
+        },
+        {
+          nr: "14",
+          title: "Mostenire",
+          file: "14.html",
+          desc: "Reutilizarea si extinderea claselor prin mostenire.",
+          subchapters: [
+            { label: "Sintaxa mostenirii", definition: "Clasa derivata mosteneste clasa de baza folosind simbolul : (ex: class Copil : Parinte)." },
+            { label: "Membri mosteniti", definition: "Clasa derivata are acces la membrii public si protected ai clasei de baza." },
+            { label: "Ascunderea membrilor", definition: "Folosirea cuvantului new pentru a ascunde un membru mostenit cu o implementare noua." },
+            { label: "Clasa Object", definition: "Toate clasele deriva implicit din System.Object, oferind metode precum ToString() si Equals()." }
+          ]
+        },
+        {
+          nr: "15",
+          title: "Polimorfism",
+          file: "15.html",
+          desc: "Comportament diferit in functie de tipul obiectului la runtime.",
+          subchapters: [
+            { label: "Metode virtuale", definition: "Metode marcate cu virtual in clasa de baza, care pot fi suprascrise in clasele derivate." },
+            { label: "override", definition: "Cuvant cheie folosit in clasa derivata pentru a oferi o implementare specifica unei metode virtuale." },
+            { label: "Legare dinamica", definition: "Apelul metodei corecte se decide la runtime, in functie de tipul real al obiectului." },
+            { label: "Polimorfism prin interfete", definition: "Obiecte de tipuri diferite pot fi tratate uniform daca implementeaza aceeasi interfata." }
+          ]
+        },
+        {
+          nr: "16",
+          title: "Encapsulare",
+          file: "16.html",
+          desc: "Ascunderea detaliilor interne si expunerea controlata a functionalitatii.",
+          subchapters: [
+            { label: "Principiul encapsularii", definition: "Datele interne ale unui obiect sunt ascunse de lumea exterioara, accesul facandu-se prin metode publice." },
+            { label: "Proprietati auto", definition: "Proprietati cu get si set implicite, care genereaza automat un camp privat (ex: public int Varsta { get; set; })." },
+            { label: "Validare in setter", definition: "Logica de validare plasata in setter pentru a mentine integritatea datelor." },
+            { label: "Proprietati read-only", definition: "Proprietati cu doar get, initializate in constructor sau direct la declarare." }
+          ]
+        },
+        {
+          nr: "17",
+          title: "Clase abstracte",
+          file: "17.html",
+          desc: "Clase care nu pot fi instantiate, oferind un sablon pentru clasele derivate.",
+          subchapters: [
+            { label: "Declarare abstracta", definition: "Clasa marcata cu abstract care nu poate fi instantiata direct, fiind destinata mostenirii." },
+            { label: "Metode abstracte", definition: "Metode fara implementare in clasa abstracta, care trebuie implementate in clasele derivate." },
+            { label: "Metode concrete", definition: "Clasele abstracte pot contine si metode cu implementare, mostenite ca atare de clasele derivate." },
+            { label: "Diferenta fata de interfete", definition: "Clasele abstracte pot avea campuri si implementari; interfetele definesc doar contracte." }
+          ]
+        },
+        {
+          nr: "18",
+          title: "Interfete",
+          file: "18.html",
+          desc: "Contracte care definesc functionalitatea pe care o clasa trebuie sa o implementeze.",
+          subchapters: [
+            { label: "Definirea unei interfete", definition: "Interfata defineste semnaturi de metode si proprietati, fara implementare, folosind cuvantul interface." },
+            { label: "Implementare explicita", definition: "Cand o clasa implementeaza mai multe interfete cu membri cu acelasi nume, se foloseste numele complet calificat." },
+            { label: "Mostenire multipla", definition: "O clasa poate implementa mai multe interfete, realizand o forma de mostenire multipla." },
+            { label: "Interfete generice", definition: "Interfete cu parametri de tip, permitand definirea de contracte tipizate (ex: IComparable<T>)." }
+          ]
+        },
+        {
+          nr: "19",
+          title: "Proprietati si indexatori",
+          file: "19.html",
+          desc: "Acces controlat la date si acces prin index pentru obiecte.",
+          subchapters: [
+            { label: "Proprietati complete", definition: "Proprietati cu camp privat si logica personalizata in get si set." },
+            { label: "Proprietati auto", definition: "Sintaxa simplificata unde compilatorul genereaza automat campul privat." },
+            { label: "Indexatori", definition: "Permit accesul la obiect printr-un index, similar array-urilor (ex: obj[0])." },
+            { label: "Supraincarcarea indexatorilor", definition: "Se pot defini mai multi indexatori cu parametri diferiti in aceeasi clasa." }
+          ]
+        },
+        {
+          nr: "20",
+          title: "Structuri (Structs)",
+          file: "20.html",
+          desc: "Tipuri de valoare care encapsuleaza date si functionalitati.",
+          subchapters: [
+            { label: "Diferenta class vs struct", definition: "Structurile sunt tipuri de valoare (alocate pe stiva), clasele sunt tipuri de referinta (alocate pe heap)." },
+            { label: "Limitari struct", definition: "Structurile nu pot mosteni alte clase sau structuri si nu pot fi mostenite." },
+            { label: "Constructori in struct", definition: "Structurile pot avea constructori cu parametri, dar nu si constructor implicit fara parametri." },
+            { label: "Performance", definition: "Structurile pot fi mai eficiente pentru obiecte mici, frecvent create si distruse." }
+          ]
+        },
+        {
+          nr: "21",
+          title: "Enumerari (Enums)",
+          file: "21.html",
+          desc: "Seturi de constante numite pentru lizibilitate si siguranta tipului.",
+          subchapters: [
+            { label: "Definirea unui enum", definition: "Un tip valoare care defineste un set de constante numite (ex: enum Zile { Luni, Marti, Miercuri })." },
+            { label: "Valori implicite", definition: "Primul element are valoarea 0, iar urmatoarele sunt incrementate cu 1, daca nu se specifica explicit." },
+            { label: "Enum cu flag-uri", definition: "Atributul [Flags] permite combinarea valorilor folosind operatori pe biti." },
+            { label: "Conversii", definition: "Se poate converti intre enum si int, dar necesita cast explicit." }
+          ]
+        },
+        {
+          nr: "22",
+          title: "Tratarea exceptiilor",
+          file: "22.html",
+          desc: "Mecanisme robuste pentru gestionarea erorilor in aplicatii C#.",
+          subchapters: [
+            { label: "Blocurile try-catch-finally", definition: "Structura fundamentala pentru prinderea si tratarea exceptiilor, cu cod de curatenie in finally." },
+            { label: "Filtre de exceptie", definition: "when permite filtrarea exceptiilor in catch pe baza unei conditii booleene." },
+            { label: "Excepții imbricate", definition: "O exceptie poate contine o alta exceptie in proprietatea InnerException." },
+            { label: "using si IDisposable", definition: "Declaratia using asigura eliberarea automata a resurselor care implementeaza IDisposable." }
+          ]
+        },
+        {
+          nr: "23",
+          title: "Colectii si tipuri generice (Generics)",
+          file: "23.html",
+          desc: "Colectii tipizate, constrangeri si avantajele genericelor.",
+          subchapters: [
+            { label: "Clase generice", definition: "Clase definite cu parametri de tip, permitand reutilizarea codului pentru tipuri diferite." },
+            { label: "Constrangeri", definition: "where T : clasa restrictioneaza tipurile care pot fi folosite ca argumente generice." },
+            { label: "HashSet<T>", definition: "Colectie care stocheaza elemente unice, fara duplicate, cu operatii de multimi." },
+            { label: "Colectii imutabile", definition: "Colectii care nu pot fi modificate dupa creare, oferind siguranta in medii concurente." }
+          ]
+        },
+        {
+          nr: "24",
+          title: "Delegati (Delegates)",
+          file: "24.html",
+          desc: "Tipuri care encapsuleaza referinte catre metode.",
+          subchapters: [
+            { label: "Definirea unui delegat", definition: "Un tip care defineste semnatura unei metode si poate stoca referinte catre metode compatibile." },
+            { label: "Delegati multicast", definition: "Un delegat poate contine referinte catre mai multe metode, apelandu-le pe toate in ordine." },
+            { label: "Func si Action", definition: "Tipuri delegate predefinite: Func returneaza o valoare, Action nu returneaza nimic." },
+            { label: "Predicate<T>", definition: "Delegat care primeste un parametru si returneaza bool, utilizat frecvent pentru filtrare." }
+          ]
+        },
+        {
+          nr: "25",
+          title: "Evenimente (Events)",
+          file: "25.html",
+          desc: "Mecanismul de notificare intre obiecte in C#.",
+          subchapters: [
+            { label: "Declararea unui eveniment", definition: "Evenimentele se declara cu event si un tip delegat, permitand subscrierea si notificarea." },
+            { label: "EventHandler", definition: "Delegatul standard pentru evenimente, cu parametrii object sender si EventArgs e." },
+            { label: "EventArgs personalizate", definition: "Clase derivate din EventArgs pentru a transmite date suplimentare la eveniment." },
+            { label: "Dezabonare", definition: "Este important sa te dezabonezi de la evenimente pentru a preveni memory leaks." }
+          ]
+        },
+        {
+          nr: "26",
+          title: "Metode anonime si expresii Lambda",
+          file: "26.html",
+          desc: "Functii inline si sintaxa concisa pentru delegate.",
+          subchapters: [
+            { label: "Metode anonime", definition: "Blocuri de cod fara nume, definite cu delegate, utile pentru callback-uri simple." },
+            { label: "Expresii lambda", definition: "Sintaxa concisa (=>) pentru definirea de functii anonime, capturand variabilele din context." },
+            { label: "Closure", definition: "O expresie lambda care captureaza variabile locale din metoda in care este definita." },
+            { label: "Lambda in LINQ", definition: "Utilizarea intensiva a expresiilor lambda in interogarile LINQ pentru filtrare si proiectie." }
+          ]
+        },
+        {
+          nr: "27",
+          title: "LINQ (Language Integrated Query)",
+          file: "27.html",
+          desc: "Interogarea avansata a datelor din diverse surse.",
+          subchapters: [
+            { label: "Sintaxa de interogare", definition: "Interogari declarative asemanatoare SQL: from, where, select, group, orderby." },
+            { label: "Metode de extensie", definition: "Where(), Select(), GroupBy() – metode care extind IEnumerable<T>." },
+            { label: "Join si GroupJoin", definition: "Operatii de unire a doua secvente pe baza unei chei comune." },
+            { label: "LINQ to SQL", definition: "Interogarea bazelor de date relationale direct din cod C#, cu traducere automata in SQL." }
+          ]
+        },
+        {
+          nr: "28",
+          title: "Programare asincrona (Task, async, await)",
+          file: "28.html",
+          desc: "Scrierea de cod asincron eficient si responsive.",
+          subchapters: [
+            { label: "Task si Task<T>", definition: "Reprezinta o operatie asincrona care poate returna sau nu o valoare." },
+            { label: "async si await", definition: "async permite folosirea await in metoda; await suspenda executia pana la finalizarea task-ului." },
+            { label: "ConfigureAwait", definition: "Configureaza modul in care continuarea se executa dupa await (ex: ConfigureAwait(false))." },
+            { label: "Task.WhenAll / WhenAny", definition: "WhenAll asteapta finalizarea tuturor task-urilor; WhenAny asteapta doar primul care se termina." }
+          ]
+        },
+        {
+          nr: "29",
+          title: "Manipularea fisierelor si a fluxurilor de date (I/O)",
+          file: "29.html",
+          desc: "Citirea si scrierea fisierelor, lucrul cu stream-uri.",
+          subchapters: [
+            { label: "File si FileInfo", definition: "File ofera metode statice pentru operatii cu fisiere; FileInfo pentru instante." },
+            { label: "StreamReader / StreamWriter", definition: "Clase pentru citirea si scrierea textului in fisiere, cu suport pentru encoding." },
+            { label: "FileStream", definition: "Ofera acces la nivel de byte la un fisier, pentru operatii binare." },
+            { label: "Path", definition: "Clasa utilitara pentru manipularea sirurilor de caractere care reprezinta cai de fisiere." }
+          ]
+        },
+        {
+          nr: "30",
+          title: "Multithreading si concurenta",
+          file: "30.html",
+          desc: "Executia simultana a codului pe mai multe thread-uri.",
+          subchapters: [
+            { label: "Thread", definition: "Clasa care reprezinta un fir de executie separat; poate fi creata si pornita manual." },
+            { label: "lock si Monitor", definition: "Mecanisme de sincronizare pentru a preveni accesul simultan la resurse partajate." },
+            { label: "ThreadPool", definition: "Gestionarea automata a unui pool de thread-uri reutilizabile pentru sarcini de scurta durata." },
+            { label: "Concurrent collections", definition: "Colectii thread-safe precum ConcurrentDictionary si ConcurrentQueue." }
+          ]
+        },
+        {
+          nr: "31",
+          title: "Gestiunea memoriei si Garbage Collector",
+          file: "31.html",
+          desc: "Managementul automat al memoriei si optimizarea performantei.",
+          subchapters: [
+            { label: "Garbage Collector", definition: "Mecanismul automat care elibereaza memoria ocupata de obiectele care nu mai sunt referentiate." },
+            { label: "Generatii", definition: "GC organizeaza obiectele in generatii (0, 1, 2) pentru a optimiza colectarea." },
+            { label: "IDisposable si Dispose", definition: "Pattern pentru eliberarea explicita a resurselor unmanaged." },
+            { label: "WeakReference", definition: "Referinta care nu impiedica GC sa colecteze obiectul, utila pentru cache-uri." }
+          ]
+        },
+        {
+          nr: "32",
+          title: "Atribute (Attributes)",
+          file: "32.html",
+          desc: "Metadate atasate elementelor de cod pentru configurari si comportament.",
+          subchapters: [
+            { label: "Atribute predefinite", definition: "[Obsolete], [Serializable], [DllImport] – atribute din framework cu comportament specific." },
+            { label: "Atribute personalizate", definition: "Clase derivate din Attribute, create pentru a adauga metadate proprii in cod." },
+            { label: "Reflection si atribute", definition: "Citirea atributelor la runtime folosind GetCustomAttributes()." },
+            { label: "Conditional compilation", definition: "[Conditional] permite includerea sau excluderea codului in functie de simboluri de compilare." }
+          ]
+        },
+        {
+          nr: "33",
+          title: "Reflectie (Reflection)",
+          file: "33.html",
+          desc: "Inspectarea si manipularea tipurilor la runtime.",
+          subchapters: [
+            { label: "Type si GetType()", definition: "Obtinerea obiectului Type care descrie metadata ale unui tip." },
+            { label: "Activator.CreateInstance", definition: "Crearea de instante ale unui tip la runtime, fara a cunoaste tipul la compilare." },
+            { label: "InvokeMember", definition: "Apelarea metodelor si accesarea proprietatilor prin nume, la runtime." },
+            { label: "Assembly", definition: "Reprezinta o unitate de deploy .NET; contine tipuri si resurse." }
+          ]
+        },
+        {
+          nr: "34",
+          title: "Tupluri (Tuples)",
+          file: "34.html",
+          desc: "Structuri usoare pentru gruparea mai multor valori.",
+          subchapters: [
+            { label: "ValueTuple", definition: "Tip valoare introdus in C# 7.0 care permite returnarea mai multor valori dintr-o metoda." },
+            { label: "Deconstructie", definition: "Descompunerea unui tuplu in variabile individuale: var (nume, varsta) = GetPerson();" },
+            { label: "Tupluri numite", definition: "Elementele tuplului pot avea nume explicite pentru claritate: (string Nume, int Varsta)." },
+            { label: "Comparare tupluri", definition: "Tuplurile suporta compararea structurala cu == si != incepand cu C# 7.3." }
+          ]
+        },
+        {
+          nr: "35",
+          title: "Pattern Matching",
+          file: "35.html",
+          desc: "Tehnici avansate de potrivire a tiparelor in C#.",
+          subchapters: [
+            { label: "is si as", definition: "is verifica tipul si poate atribui; as face cast sigur, returnand null daca nu reuseste." },
+            { label: "switch expressions", definition: "Expresii switch concise care returneaza o valoare pe baza pattern-urilor potrivite." },
+            { label: "Property pattern", definition: "Potrivirea pe baza proprietatilor unui obiect: { Nume: \"Ion\", Varsta: > 18 }." },
+            { label: "Positional pattern", definition: "Potrivirea pe baza pozitiei, folosind deconstructia tuplurilor." }
+          ]
+        },
+        {
+          nr: "36",
+          title: "Tipuri record (Records)",
+          file: "36.html",
+          desc: "Tipuri imutabile cu egalitate bazata pe valoare.",
+          subchapters: [
+            { label: "record class", definition: "Tip referinta cu egalitate valorica si sintaxa concisa pentru definire." },
+            { label: "record struct", definition: "Tip valoare cu egalitate valorica, combinand avantajele structurilor cu cele ale record-urilor." },
+            { label: "with expressions", definition: "Crearea unei copii a unui record cu unele proprietati modificate: persoana with { Varsta = 26 }." },
+            { label: "Imutabilitate", definition: "Record-urile sunt proiectate pentru a fi imutabile, facilitand programarea functionala." }
+          ]
+        },
+        {
+          nr: "37",
+          title: "Pointeri si cod nesigur (Unsafe code)",
+          file: "37.html",
+          desc: "Lucrul direct cu memoria si pointeri in contexte speciale.",
+          subchapters: [
+            { label: "unsafe", definition: "Cuvant cheie care permite utilizarea pointerilor si a operatiilor directe pe memorie." },
+            { label: "fixed", definition: "Fixeaza o variabila in memorie pentru a preveni mutarea ei de catre GC pe durata folosirii pointerului." },
+            { label: "stackalloc", definition: "Aloca memorie pe stiva in loc de heap, pentru array-uri temporare mici." },
+            { label: "Pointeri la functii", definition: "C# 9.0+ permite pointeri la functii pentru interoperabilitate performanta." }
+          ]
+        },
+        {
+          nr: "38",
+          title: "Functii locale",
+          file: "38.html",
+          desc: "Functii definite in interiorul altei functii pentru organizare si incapsulare.",
+          subchapters: [
+            { label: "Definire functie locala", definition: "Functie declarata in interiorul unei metode, accesibila doar in acel context." },
+            { label: "Capturare variabile", definition: "Functiile locale pot captura variabilele locale si parametrii metodei parinte." },
+            { label: "static local functions", definition: "C# 8+ permite functii locale statice care nu captureaza variabile externe." },
+            { label: "Iterator methods", definition: "Functiile locale pot fi folosite pentru a implementa iteratori personalizati cu yield return." }
+          ]
+        },
+        {
+          nr: "39",
+          title: "Interoperabilitate (P/Invoke)",
+          file: "39.html",
+          desc: "Apelarea functiilor native din biblioteci externe.",
+          subchapters: [
+            { label: "DllImport", definition: "Atribut care permite apelarea functiilor din DLL-uri native (Windows API)." },
+            { label: "Marshalling", definition: "Conversia automata sau manuala intre tipurile managed si cele native." },
+            { label: "StructLayout", definition: "Atribut care controleaza modul in care structurile sunt aranjate in memorie pentru codul nativ." },
+            { label: "SafeHandle", definition: "Clasa care gestioneaza safe handle-uri catre resurse native, prevenind memory leaks." }
           ]
         }
       ];
 
       const chaptersGrid = document.getElementById('chaptersGrid');
-      
+      const unavailableModal = document.getElementById('unavailableModal');
+      const modalChapterName = document.getElementById('modalChapterName');
+
+      const availableChapters = ['1.html', '2.html', '3.html', '4.html'];
+
+      function checkChapterAvailability(fileName) {
+        return availableChapters.includes(fileName);
+      }
+
+      function showUnavailableModal(chapterTitle) {
+        modalChapterName.textContent = chapterTitle;
+        unavailableModal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+      }
+
+      function hideUnavailableModal() {
+        unavailableModal.classList.remove('active');
+        document.body.style.overflow = '';
+      }
+
+      unavailableModal.addEventListener('click', function(e) {
+        if (e.target === unavailableModal) {
+          hideUnavailableModal();
+        }
+      });
+
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && unavailableModal.classList.contains('active')) {
+          hideUnavailableModal();
+        }
+      });
+
       function buildChapters() {
         chaptersGrid.innerHTML = '';
-        chaptersData.forEach(chapter => {
+        chaptersData.forEach((chapter, index) => {
           const card = document.createElement('div');
           card.className = 'chapter-card';
+          card.style.animationDelay = (index * 0.03) + 's';
           
           let subHtml = '';
           chapter.subchapters.forEach(sub => {
-            subHtml += `<a href="#" class="sub-item" data-definition="${escapeHtml(sub.definition)}">${escapeHtml(sub.label)}</a>`;
+            subHtml += '<a href="#" class="sub-item" data-definition="' + escapeHtml(sub.definition) + '">' + escapeHtml(sub.label) + '</a>';
           });
+
+          const isAvailable = checkChapterAvailability(chapter.file);
           
-          // Titlul capitolului este un link către fișierul din folderul capitole/
-          card.innerHTML = `
-            <div class="chapter-header">
-              <span class="chapter-nr">${escapeHtml(chapter.nr)}</span>
-              <a href="capitole/${escapeHtml(chapter.file)}" class="chapter-title-link">${escapeHtml(chapter.title)}</a>
-            </div>
-            <div class="chapter-desc">${escapeHtml(chapter.desc)}</div>
-            <div class="sub-list">
-              ${subHtml}
-            </div>
-          `;
+          let titleHtml;
+          if (isAvailable) {
+            titleHtml = '<a href="capitole/' + escapeHtml(chapter.file) + '" class="chapter-title-link">' + escapeHtml(chapter.title) + '</a>';
+          } else {
+            titleHtml = '<a href="#" class="chapter-title-link unavailable" data-chapter-title="' + escapeHtml(chapter.title) + '" data-chapter-nr="' + escapeHtml(chapter.nr) + '">' + escapeHtml(chapter.title) + '</a>';
+          }
+          
+          card.innerHTML = 
+            '<div class="chapter-header">' +
+              '<span class="chapter-nr">' + escapeHtml(chapter.nr) + '</span>' +
+              titleHtml +
+            '</div>' +
+            '<div class="chapter-desc">' + escapeHtml(chapter.desc) + '</div>' +
+            '<div class="sub-list">' +
+              subHtml +
+            '</div>';
           chaptersGrid.appendChild(card);
+        });
+
+        document.querySelectorAll('.chapter-title-link.unavailable').forEach(link => {
+          link.addEventListener('click', function(e) {
+            e.preventDefault();
+            const chapterTitle = this.getAttribute('data-chapter-title');
+            const chapterNr = this.getAttribute('data-chapter-nr');
+            showUnavailableModal('Capitolul ' + chapterNr + ': ' + chapterTitle);
+          });
         });
       }
       
@@ -603,14 +1147,13 @@
           .replace(/'/g, '&#039;');
       }
 
-      // Toast pentru definiția subcapitolelor
       function showDefinitionToast(definitionText, subLabel) {
         const oldToast = document.querySelector('.definition-toast');
         if (oldToast) oldToast.remove();
 
         const toast = document.createElement('div');
         toast.className = 'definition-toast';
-        toast.textContent = `📘 ${subLabel}: ${definitionText}`;
+        toast.textContent = subLabel + ': ' + definitionText;
         document.body.appendChild(toast);
         
         requestAnimationFrame(() => {
@@ -633,7 +1176,6 @@
             const definition = this.getAttribute('data-definition');
             const label = this.textContent.trim();
             
-            // Mică animație tactilă
             this.style.transition = '0.15s';
             this.style.transform = 'scale(0.92)';
             setTimeout(() => {
@@ -646,13 +1188,12 @@
             if (definition) {
               showDefinitionToast(definition, label);
             } else {
-              showDefinitionToast('Definiția va fi disponibilă în curând.', label);
+              showDefinitionToast('Definitia va fi disponibila in curand.', label);
             }
           });
         });
       }
 
-      // Hamburger menu
       const hamburger = document.querySelector('.hamburger');
       const navMenu = document.querySelector('.nav-menu');
 
@@ -686,7 +1227,6 @@
         }
       });
 
-      // Construim capitolele și atașăm evenimentele
       buildChapters();
       attachSubItemEvents();
     })();
