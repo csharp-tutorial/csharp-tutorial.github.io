@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>C# · Capitolul 2 – Sintaxa de bază</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600&display=swap" rel="stylesheet" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Inter', 'Segoe UI', sans-serif; line-height: 1.6; color: #2c2a2f; background-color: #F7ECE1; min-height: 100vh; overflow-x: hidden; }
+    a, button, .nav-link, .bar, .highlight, .subcapitol-card { transition: all 0.25s ease; }
+    header { background: linear-gradient(145deg, #CAC4CE 0%, #8D86C9 100%); box-shadow: 0 8px 24px rgba(114, 90, 193, 0.15); border-bottom: 1px solid rgba(255, 238, 221, 0.4); backdrop-filter: blur(2px); position: sticky; top: 0; z-index: 1000; }
+    .navbar { min-height: 76px; display: flex; justify-content: space-between; align-items: center; padding: 0 32px; max-width: 1280px; margin: 0 auto; }
+    .nav-branding { font-size: 2.2rem; font-weight: 600; letter-spacing: 1px; color: #F7ECE1; text-shadow: 0 2px 8px rgba(114, 90, 193, 0.3); text-decoration: none; position: relative; }
+    .nav-branding::after { content: ''; position: absolute; bottom: 4px; left: 0; width: 0; height: 3px; background: #FFEEDD; border-radius: 4px; transition: width 0.4s ease; }
+    .nav-branding:hover::after { width: 80%; }
+    .nav-branding:hover { transform: scale(1.02); color: #ffffff; }
+    .nav-menu { display: flex; align-items: center; gap: 40px; list-style: none; }
+    .nav-link { color: #F7ECE1; text-decoration: none; font-weight: 500; font-size: 1.05rem; padding: 6px 0; position: relative; letter-spacing: 0.3px; border-bottom: 2px solid transparent; }
+    .nav-link::after { content: ''; position: absolute; bottom: -2px; left: 0; width: 0; height: 2px; background: #FFEEDD; border-radius: 4px; transition: width 0.35s ease; }
+    .nav-link:hover { color: #ffffff; }
+    .nav-link:hover::after { width: 100%; }
+    .hamburger { display: none; cursor: pointer; flex-direction: column; gap: 5px; padding: 6px 4px; }
+    .bar { display: block; width: 28px; height: 3px; background: #F7ECE1; border-radius: 6px; transition: all 0.3s ease-in-out; transform-origin: center; }
+    @media (max-width: 768px) {
+      .hamburger { display: flex; }
+      .nav-menu { position: fixed; left: -100%; top: 76px; flex-direction: column; background: linear-gradient(160deg, #CAC4CE 0%, #8D86C9 100%); width: 100%; padding: 28px 0; gap: 24px; box-shadow: 0 18px 40px rgba(114, 90, 193, 0.2); transition: 0.35s cubic-bezier(0.23, 1, 0.32, 1); backdrop-filter: blur(6px); border-top: 1px solid rgba(255, 238, 221, 0.25); }
+      .nav-menu.active { left: 0; }
+      .nav-item { margin: 0; }
+      .nav-link { font-size: 1.2rem; padding: 6px 0; }
+      .hamburger.active .bar:nth-child(1) { transform: translateY(8px) rotate(45deg); }
+      .hamburger.active .bar:nth-child(2) { opacity: 0; transform: scaleX(0); }
+      .hamburger.active .bar:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
+    }
+    .container { max-width: 960px; margin: 0 auto; padding: 32px 24px; }
+    .breadcrumb { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; font-size: 0.95rem; color: #725AC1; opacity: 0; animation: fadeSlide 0.6s ease forwards; }
+    .breadcrumb a { color: #8D86C9; text-decoration: none; font-weight: 500; }
+    .breadcrumb a:hover { color: #725AC1; text-decoration: underline; }
+    .breadcrumb span { color: #CAC4CE; }
+    .chapter-header-section { margin-bottom: 32px; padding-bottom: 20px; border-bottom: 3px solid rgba(141, 134, 201, 0.2); opacity: 0; animation: fadeSlide 0.7s ease forwards; animation-delay: 0.1s; }
+    @keyframes fadeSlide { 0% { opacity: 0; transform: translateY(18px); } 100% { opacity: 1; transform: translateY(0); } }
+    .chapter-badge { display: inline-block; background: linear-gradient(135deg, #CAC4CE, #8D86C9); color: #F7ECE1; padding: 6px 18px; border-radius: 40px; font-weight: 600; font-size: 0.9rem; letter-spacing: 0.5px; margin-bottom: 12px; }
+    .chapter-header-section h1 { font-size: 2.4rem; color: #725AC1; letter-spacing: -0.5px; margin-bottom: 8px; }
+    .chapter-header-section .chapter-subtitle { font-size: 1.1rem; color: #4b4752; font-style: italic; }
+    .subcapitol-card { background: rgba(255, 238, 221, 0.55); backdrop-filter: blur(8px); border: 1px solid rgba(202, 196, 206, 0.3); border-radius: 28px; padding: 24px 28px; margin-bottom: 24px; box-shadow: 0 8px 24px rgba(141, 134, 201, 0.04); opacity: 0; transform: translateY(20px); transition: background 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease, transform 0.35s ease; }
+    .subcapitol-card.reveal { opacity: 1; transform: translateY(0); }
+    .subcapitol-card:hover { background: rgba(255, 238, 221, 0.8); border-color: #CAC4CE; box-shadow: 0 14px 36px rgba(114, 90, 193, 0.1); transform: translateY(-4px); }
+    .subcapitol-card h2 { font-size: 1.5rem; color: #725AC1; margin-bottom: 10px; display: flex; align-items: center; gap: 10px; }
+    .subcapitol-card h2 .icon { font-size: 1.6rem; }
+    .subcapitol-card p { font-size: 1.02rem; color: #3d3a42; line-height: 1.7; margin-bottom: 12px; }
+    .subcapitol-card ul { list-style: none; padding-left: 8px; }
+    .subcapitol-card ul li { padding: 6px 0; font-size: 0.98rem; color: #3d3a42; display: flex; align-items: flex-start; gap: 10px; }
+    .subcapitol-card ul li::before { content: '▹'; color: #8D86C9; font-weight: bold; font-size: 1.1rem; flex-shrink: 0; }
+    .highlight { background: linear-gradient(120deg, #CAC4CE 0%, #8D86C9 100%); background-size: 200% 100%; color: #F7ECE1; padding: 2px 12px; border-radius: 40px; font-weight: 600; display: inline-block; animation: shimmer 4s infinite alternate; }
+    @keyframes shimmer { 0% { background-position: 0% 50%; } 100% { background-position: 100% 50%; } }
+    .highlight:hover { transform: scale(1.04); background: #725AC1; }
+    code { background: rgba(202, 196, 206, 0.2); padding: 2px 10px; border-radius: 20px; font-family: 'Fira Code', 'Consolas', monospace; font-size: 0.9rem; color: #725AC1; }
+    .chapter-nav { display: flex; justify-content: space-between; align-items: center; margin-top: 40px; padding-top: 24px; border-top: 2px solid rgba(202, 196, 206, 0.3); opacity: 0; animation: fadeSlide 0.7s ease forwards; animation-delay: 0.6s; }
+    .nav-btn { display: inline-flex; align-items: center; gap: 8px; padding: 12px 24px; background: #CAC4CE; color: #2c2a2f; text-decoration: none; border-radius: 60px; font-weight: 500; box-shadow: 0 4px 12px rgba(114, 90, 193, 0.08); border: 1px solid rgba(255, 238, 221, 0.3); }
+    .nav-btn:hover { background: #8D86C9; color: #F7ECE1; transform: translateY(-2px); box-shadow: 0 10px 28px rgba(114, 90, 193, 0.18); }
+    .nav-btn.prev::before { content: '←'; font-size: 1.2rem; }
+    .nav-btn.next::after { content: '→'; font-size: 1.2rem; }
+    .nav-btn.disabled { opacity: 0.4; pointer-events: none; cursor: default; }
+    .back-to-chapters { display: inline-block; margin-top: 16px; color: #8D86C9; text-decoration: none; font-weight: 500; font-size: 0.95rem; }
+    .back-to-chapters:hover { color: #725AC1; text-decoration: underline; }
+    .back-to-chapters::before { content: '← '; }
+    .chapter-footer { text-align: center; margin-top: 48px; font-size: 0.9rem; color: #8D86C9; opacity: 0.7; }
+    @media (max-width: 600px) {
+      .navbar { padding: 0 18px; }
+      .nav-branding { font-size: 1.8rem; }
+      .container { padding: 20px 16px; }
+      .chapter-header-section h1 { font-size: 1.8rem; }
+      .subcapitol-card { padding: 18px 20px; }
+      .subcapitol-card h2 { font-size: 1.25rem; }
+      .chapter-nav { flex-direction: column; gap: 16px; }
+      .nav-btn { width: 100%; justify-content: center; }
+    }
+    a:focus-visible, button:focus-visible { outline: 3px solid #8D86C9; outline-offset: 4px; border-radius: 8px; }
+  </style>
+</head>
+<body>
+  <header>
+    <nav class="navbar">
+      <a href="../index.html" class="nav-branding">C#</a>
+      <ul class="nav-menu">
+        <li class="nav-item"><a href="../index.html" class="nav-link">Acasă</a></li>
+        <li class="nav-item"><a href="../capitole.html" class="nav-link">Capitole</a></li>
+        <li class="nav-item"><a href="../compilator.html" class="nav-link">Compilator</a></li>
+      </ul>
+      <div class="hamburger" aria-label="meniu" role="button" tabindex="0">
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <div class="container">
+      <div class="breadcrumb">
+        <a href="../index.html">Acasă</a>
+        <span>›</span>
+        <a href="../capitole.html">Capitole</a>
+        <span>›</span>
+        <strong>Capitolul 2</strong>
+      </div>
+
+      <div class="chapter-header-section">
+        <span class="chapter-badge">Capitolul 2</span>
+        <h1>Sintaxa de bază</h1>
+        <p class="chapter-subtitle">Variabile, tipuri de date, operatori, conversii și citirea de la tastatură</p>
+      </div>
+
+      <div class="subcapitol-card" data-reveal>
+        <h2><span class="icon">📦</span> Variabile și constante</h2>
+        <p>O <span class="highlight">variabilă</span> este un spațiu de memorie numit care stochează date ce pot fi modificate în timpul execuției. O <span class="highlight">constantă</span> (declarată cu <code>const</code>) este o valoare fixă, care nu poate fi schimbată după inițializare.</p>
+        <ul>
+          <li><strong>Declarare variabilă:</strong> <code>int varsta = 25;</code> – tipul, numele și valoarea inițială.</li>
+          <li><strong>Constantă:</strong> <code>const double PI = 3.14159;</code> – valoarea rămâne neschimbată pe tot parcursul programului.</li>
+          <li><strong>var:</strong> C# poate deduce automat tipul: <code>var nume = "Ana";</code> – compilatorul știe că e string.</li>
+          <li><strong>Reguli de numire:</strong> Numele variabilelor încep cu literă sau underscore, nu conțin spații și sunt case-sensitive.</li>
+        </ul>
+      </div>
+
+      <div class="subcapitol-card" data-reveal>
+        <h2><span class="icon">🔢</span> Tipuri de date</h2>
+        <p>C# este un limbaj <span class="highlight">puternic tipizat</span>, ceea ce înseamnă că fiecare variabilă trebuie să aibă un tip bine definit. Iată principalele tipuri:</p>
+        <ul>
+          <li><strong>int</strong> – numere întregi (ex: 42, -10).</li>
+          <li><strong>double</strong> – numere cu zecimale (ex: 3.14, -0.5).</li>
+          <li><strong>char</strong> – un singur caracter (ex: 'A', '9').</li>
+          <li><strong>string</strong> – șir de caractere (ex: "Hello").</li>
+          <li><strong>bool</strong> – valori logice: <code>true</code> sau <code>false</code>.</li>
+        </ul>
+      </div>
+
+      <div class="subcapitol-card" data-reveal>
+        <h2><span class="icon">⚡</span> Operatori</h2>
+        <p>Operatorii sunt simboluri care efectuează operații asupra variabilelor și valorilor:</p>
+        <ul>
+          <li><strong>Aritmetici:</strong> <code>+</code>, <code>-</code>, <code>*</code>, <code>/</code>, <code>%</code> (modulo – restul împărțirii).</li>
+          <li><strong>Relaționali:</strong> <code>==</code>, <code>!=</code>, <code>&lt;</code>, <code>&gt;</code>, <code>&lt;=</code>, <code>&gt;=</code> – returnează true/false.</li>
+          <li><strong>Logici:</strong> <code>&&</code> (AND), <code>||</code> (OR), <code>!</code> (NOT) – combinați condiții boolean.</li>
+          <li><strong>Atribuire:</strong> <code>=</code>, <code>+=</code>, <code>-=</code>, <code>*=</code> etc.</li>
+        </ul>
+      </div>
+
+      <div class="subcapitol-card" data-reveal>
+        <h2><span class="icon">🔄</span> Conversii de tip</h2>
+        <p>Transformarea unei valori dintr-un tip în altul poate fi:</p>
+        <ul>
+          <li><strong>Implicită</strong> – când nu există risc de pierdere de date (ex: <code>int</code> → <code>double</code>).</li>
+          <li><strong>Explicită (cast)</strong> – când pierderea e posibilă și programatorul își asumă: <code>double x = 3.14; int y = (int)x; // y = 3</code>.</li>
+          <li><strong>Metode de conversie:</strong> <code>int.Parse("42")</code>, <code>Convert.ToInt32("42")</code>, <code>.ToString()</code>.</li>
+        </ul>
+      </div>
+
+      <div class="subcapitol-card" data-reveal>
+        <h2><span class="icon">⌨️</span> Citire și scriere în consolă</h2>
+        <p>Interacțiunea de bază cu utilizatorul se face prin:</p>
+        <ul>
+          <li><strong>Scriere:</strong> <code>Console.WriteLine("Text");</code> – afișează text și trece la linie nouă.</li>
+          <li><strong>Scriere fără linie nouă:</strong> <code>Console.Write("Text");</code>.</li>
+          <li><strong>Citire:</strong> <code>string input = Console.ReadLine();</code> – citește tot textul introdus până la Enter.</li>
+          <li><strong>Citire caracter:</strong> <code>Console.ReadKey()</code> – citește o singură tastă apăsată.</li>
+        </ul>
+      </div>
+
+      <div class="chapter-nav">
+        <a href="1.html" class="nav-btn prev">Capitolul 1</a>
+        <a href="../capitole.html" class="back-to-chapters">Înapoi la toate capitolele</a>
+        <a href="3.html" class="nav-btn next">Capitolul 3</a>
+      </div>
+
+      <p class="chapter-footer">✦ Capitolul 2 din 10 ✦ made with love by <strong>Amalia</strong> ✦</p>
+    </div>
+  </main>
+
+  <script>
+    (function() {
+      const hamburger = document.querySelector('.hamburger');
+      const navMenu = document.querySelector('.nav-menu');
+      function toggleMenu() { hamburger.classList.toggle('active'); navMenu.classList.toggle('active'); }
+      hamburger.addEventListener('click', toggleMenu);
+      document.querySelectorAll('.nav-link').forEach(link => { link.addEventListener('click', () => { if (navMenu.classList.contains('active')) { hamburger.classList.remove('active'); navMenu.classList.remove('active'); } }); });
+      document.addEventListener('click', (e) => { if (navMenu.classList.contains('active') && !e.target.closest('nav') && !e.target.closest('.hamburger')) { hamburger.classList.remove('active'); navMenu.classList.remove('active'); } });
+      hamburger.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleMenu(); } });
+      function revealSubcapitole() {
+        const cards = document.querySelectorAll('.subcapitol-card[data-reveal]');
+        const windowHeight = window.innerHeight;
+        cards.forEach(card => { const rect = card.getBoundingClientRect(); if (rect.top < windowHeight - 80 && !card.classList.contains('reveal')) { requestAnimationFrame(() => { card.classList.add('reveal'); }); } });
+      }
+      window.addEventListener('scroll', revealSubcapitole, { passive: true });
+      window.addEventListener('load', () => { setTimeout(revealSubcapitole, 150); });
+      revealSubcapitole();
+    })();
+  </script>
+</body>
+</html>
