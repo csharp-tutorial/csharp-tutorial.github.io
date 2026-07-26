@@ -15,6 +15,11 @@
       box-sizing: border-box;
     }
 
+    html {
+      overflow-x: hidden;
+      width: 100%;
+    }
+
     body {
       font-family: 'Inter', 'Segoe UI', sans-serif;
       line-height: 1.6;
@@ -22,6 +27,9 @@
       background-color: #F7ECE1;
       min-height: 100vh;
       overflow-x: hidden;
+      width: 100%;
+      max-width: 100vw;
+      position: relative;
     }
 
     a, button, .nav-link, .bar, .highlight, .card, .subcapitol-card {
@@ -37,6 +45,7 @@
       position: sticky;
       top: 0;
       z-index: 1000;
+      width: 100%;
     }
 
     .navbar {
@@ -47,6 +56,7 @@
       padding: 0 32px;
       max-width: 1280px;
       margin: 0 auto;
+      width: 100%;
     }
 
     .nav-branding {
@@ -57,6 +67,7 @@
       text-shadow: 0 2px 8px rgba(114, 90, 193, 0.3);
       text-decoration: none;
       position: relative;
+      z-index: 1001;
     }
     .nav-branding::after {
       content: '';
@@ -93,6 +104,7 @@
       position: relative;
       letter-spacing: 0.3px;
       border-bottom: 2px solid transparent;
+      white-space: nowrap;
     }
     .nav-link::after {
       content: '';
@@ -118,6 +130,8 @@
       flex-direction: column;
       gap: 5px;
       padding: 6px 4px;
+      z-index: 1001;
+      position: relative;
     }
     .bar {
       display: block;
@@ -129,17 +143,29 @@
       transform-origin: center;
     }
 
+    /* ----- Mobile Navigation ----- */
     @media (max-width: 768px) {
+      .navbar {
+        padding: 0 20px;
+        min-height: 70px;
+      }
+      
+      .nav-branding {
+        font-size: 1.8rem;
+      }
+      
       .hamburger {
         display: flex;
       }
+      
       .nav-menu {
         position: fixed;
         left: -100%;
-        top: 76px;
+        top: 70px;
         flex-direction: column;
         background: linear-gradient(160deg, #CAC4CE 0%, #8D86C9 100%);
         width: 100%;
+        max-width: 100vw;
         padding: 28px 0;
         gap: 24px;
         box-shadow: 0 18px 40px rgba(114, 90, 193, 0.2);
@@ -152,10 +178,14 @@
       }
       .nav-item {
         margin: 0;
+        width: 100%;
+        text-align: center;
       }
       .nav-link {
         font-size: 1.2rem;
         padding: 6px 0;
+        display: block;
+        width: 100%;
       }
       .hamburger.active .bar:nth-child(1) {
         transform: translateY(8px) rotate(45deg);
@@ -169,11 +199,30 @@
       }
     }
 
+    @media (max-width: 480px) {
+      .navbar {
+        padding: 0 16px;
+        min-height: 64px;
+      }
+      
+      .nav-branding {
+        font-size: 1.6rem;
+      }
+      
+      .nav-menu {
+        top: 64px;
+      }
+    }
+
     /* ----- container ----- */
     .container {
       max-width: 960px;
       margin: 0 auto;
       padding: 32px 24px;
+      width: 100%;
+      overflow-wrap: break-word;
+      word-wrap: break-word;
+      word-break: break-word;
     }
 
     /* ----- breadcrumb & titlu capitol ----- */
@@ -186,11 +235,13 @@
       color: #725AC1;
       opacity: 0;
       animation: fadeSlide 0.6s ease forwards;
+      flex-wrap: wrap;
     }
     .breadcrumb a {
       color: #8D86C9;
       text-decoration: none;
       font-weight: 500;
+      white-space: nowrap;
     }
     .breadcrumb a:hover {
       color: #725AC1;
@@ -198,6 +249,9 @@
     }
     .breadcrumb span {
       color: #CAC4CE;
+    }
+    .breadcrumb strong {
+      white-space: nowrap;
     }
 
     .chapter-header-section {
@@ -231,12 +285,14 @@
       color: #725AC1;
       letter-spacing: -0.5px;
       margin-bottom: 8px;
+      line-height: 1.2;
     }
 
     .chapter-header-section .chapter-subtitle {
       font-size: 1.1rem;
       color: #4b4752;
       font-style: italic;
+      line-height: 1.5;
     }
 
     /* ----- carduri subcapitole ----- */
@@ -251,6 +307,7 @@
       opacity: 0;
       transform: translateY(20px);
       transition: background 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease, transform 0.35s ease;
+      width: 100%;
     }
 
     .subcapitol-card.reveal {
@@ -272,10 +329,13 @@
       display: flex;
       align-items: center;
       gap: 10px;
+      line-height: 1.3;
+      flex-wrap: wrap;
     }
 
     .subcapitol-card h2 .icon {
       font-size: 1.6rem;
+      flex-shrink: 0;
     }
 
     .subcapitol-card p {
@@ -283,6 +343,7 @@
       color: #3d3a42;
       line-height: 1.7;
       margin-bottom: 12px;
+      word-break: break-word;
     }
 
     .subcapitol-card ul {
@@ -297,6 +358,8 @@
       display: flex;
       align-items: flex-start;
       gap: 10px;
+      word-break: break-word;
+      line-height: 1.5;
     }
 
     .subcapitol-card ul li::before {
@@ -305,6 +368,7 @@
       font-weight: bold;
       font-size: 1.1rem;
       flex-shrink: 0;
+      margin-top: 1px;
     }
 
     .highlight {
@@ -316,6 +380,8 @@
       font-weight: 600;
       display: inline-block;
       animation: shimmer 4s infinite alternate;
+      white-space: normal;
+      word-break: break-word;
     }
 
     @keyframes shimmer {
@@ -335,6 +401,10 @@
       font-family: 'Fira Code', 'Consolas', monospace;
       font-size: 0.9rem;
       color: #725AC1;
+      word-break: break-all;
+      white-space: pre-wrap;
+      display: inline-block;
+      max-width: 100%;
     }
 
     /* ----- navigare între capitole ----- */
@@ -348,6 +418,8 @@
       opacity: 0;
       animation: fadeSlide 0.7s ease forwards;
       animation-delay: 0.6s;
+      flex-wrap: wrap;
+      gap: 12px;
     }
 
     .nav-btn {
@@ -362,6 +434,8 @@
       font-weight: 500;
       box-shadow: 0 4px 12px rgba(114, 90, 193, 0.08);
       border: 1px solid rgba(255, 238, 221, 0.3);
+      white-space: nowrap;
+      text-align: center;
     }
 
     .nav-btn:hover {
@@ -394,6 +468,7 @@
       text-decoration: none;
       font-weight: 500;
       font-size: 0.95rem;
+      white-space: nowrap;
     }
     .back-to-chapters:hover {
       color: #725AC1;
@@ -410,22 +485,132 @@
       font-size: 0.9rem;
       color: #8D86C9;
       opacity: 0.7;
+      word-break: break-word;
+    }
+
+    /* ----- Responsive styles ----- */
+    @media (max-width: 768px) {
+      .container {
+        padding: 24px 20px;
+      }
+      
+      .chapter-header-section h1 {
+        font-size: 2rem;
+      }
+      
+      .chapter-header-section .chapter-subtitle {
+        font-size: 1rem;
+      }
+      
+      .subcapitol-card {
+        padding: 20px 22px;
+        border-radius: 24px;
+      }
+      
+      .subcapitol-card h2 {
+        font-size: 1.35rem;
+      }
+      
+      .chapter-nav {
+        justify-content: center;
+      }
+      
+      .back-to-chapters {
+        order: 3;
+        width: 100%;
+        text-align: center;
+      }
     }
 
     @media (max-width: 600px) {
-      .navbar { padding: 0 18px; }
-      .nav-branding { font-size: 1.8rem; }
-      .container { padding: 20px 16px; }
-      .chapter-header-section h1 { font-size: 1.8rem; }
-      .subcapitol-card { padding: 18px 20px; }
-      .subcapitol-card h2 { font-size: 1.25rem; }
+      .container {
+        padding: 20px 16px;
+      }
+      
+      .chapter-header-section h1 {
+        font-size: 1.8rem;
+      }
+      
+      .subcapitol-card {
+        padding: 18px 18px;
+        border-radius: 20px;
+      }
+      
+      .subcapitol-card h2 {
+        font-size: 1.25rem;
+      }
+      
+      .subcapitol-card p {
+        font-size: 0.95rem;
+      }
+      
+      .subcapitol-card ul li {
+        font-size: 0.92rem;
+      }
+      
       .chapter-nav {
         flex-direction: column;
-        gap: 16px;
+        align-items: center;
       }
+      
       .nav-btn {
         width: 100%;
         justify-content: center;
+      }
+      
+      .nav-btn.disabled {
+        display: none;
+      }
+      
+      .back-to-chapters {
+        margin-top: 8px;
+      }
+      
+      .breadcrumb {
+        font-size: 0.85rem;
+      }
+    }
+
+    @media (max-width: 400px) {
+      .container {
+        padding: 16px 12px;
+      }
+      
+      .chapter-header-section h1 {
+        font-size: 1.5rem;
+      }
+      
+      .chapter-header-section .chapter-subtitle {
+        font-size: 0.9rem;
+      }
+      
+      .subcapitol-card {
+        padding: 16px 14px;
+        border-radius: 18px;
+      }
+      
+      .subcapitol-card h2 {
+        font-size: 1.15rem;
+      }
+      
+      .subcapitol-card p,
+      .subcapitol-card ul li {
+        font-size: 0.88rem;
+      }
+      
+      code {
+        font-size: 0.8rem;
+        padding: 1px 6px;
+      }
+      
+      .highlight {
+        font-size: 0.9rem;
+        padding: 2px 8px;
+      }
+      
+      .chapter-badge {
+        font-size: 0.8rem;
+        padding: 4px 14px;
       }
     }
 
