@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>C# · capitole și subcapitole</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600&display=swap" rel="stylesheet" />
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', 'Segoe UI', sans-serif;
+      line-height: 1.6;
+      color: #2c2a2f;
+      background-color: #F7ECE1;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    a, .nav-link, .bar, .highlight, .chapter-card, .sub-item {
+      transition: all 0.25s ease;
+    }
+
+    header {
+      background: linear-gradient(145deg, #CAC4CE 0%, #8D86C9 100%);
+      box-shadow: 0 8px 24px rgba(114, 90, 193, 0.15);
+      border-bottom: 1px solid rgba(255, 238, 221, 0.4);
+      backdrop-filter: blur(2px);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .navbar {
+      min-height: 76px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 32px;
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+
+    .nav-branding {
+      font-size: 2.2rem;
+      font-weight: 600;
+      letter-spacing: 1px;
+      color: #F7ECE1;
+      text-shadow: 0 2px 8px rgba(114, 90, 193, 0.3);
+      transition: 0.3s;
+      text-decoration: none;
+      position: relative;
+    }
+    .nav-branding::after {
+      content: '';
+      position: absolute;
+      bottom: 4px;
+      left: 0;
+      width: 0;
+      height: 3px;
+      background: #FFEEDD;
+      border-radius: 4px;
+      transition: width 0.4s ease;
+    }
+    .nav-branding:hover::after {
+      width: 80%;
+    }
+    .nav-branding:hover {
+      transform: scale(1.02);
+      color: #ffffff;
+    }
+
+    .nav-menu {
+      display: flex;
+      align-items: center;
+      gap: 40px;
+      list-style: none;
+    }
+
+    .nav-link {
+      color: #F7ECE1;
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 1.05rem;
+      padding: 6px 0;
+      position: relative;
+      border-bottom: 2px solid transparent;
+    }
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: #FFEEDD;
+      border-radius: 4px;
+      transition: width 0.35s ease;
+    }
+    .nav-link:hover {
+      color: #ffffff;
+    }
+    .nav-link:hover::after {
+      width: 100%;
+    }
+
+    .hamburger {
+      display: none;
+      cursor: pointer;
+      flex-direction: column;
+      gap: 5px;
+      padding: 6px 4px;
+    }
+    .bar {
+      display: block;
+      width: 28px;
+      height: 3px;
+      background: #F7ECE1;
+      border-radius: 6px;
+      transition: all 0.3s ease-in-out;
+      transform-origin: center;
+    }
+
+    @media (max-width: 768px) {
+      .hamburger {
+        display: flex;
+      }
+      .nav-menu {
+        position: fixed;
+        left: -100%;
+        top: 76px;
+        flex-direction: column;
+        background: linear-gradient(160deg, #CAC4CE 0%, #8D86C9 100%);
+        width: 100%;
+        padding: 28px 0;
+        gap: 24px;
+        box-shadow: 0 18px 40px rgba(114, 90, 193, 0.2);
+        transition: 0.35s cubic-bezier(0.23, 1, 0.32, 1);
+        backdrop-filter: blur(6px);
+        border-top: 1px solid rgba(255, 238, 221, 0.25);
+      }
+      .nav-menu.active {
+        left: 0;
+      }
+      .nav-item {
+        margin: 0;
+      }
+      .nav-link {
+        font-size: 1.2rem;
+      }
+      .hamburger.active .bar:nth-child(1) {
+        transform: translateY(8px) rotate(45deg);
+      }
+      .hamburger.active .bar:nth-child(2) {
+        opacity: 0;
+        transform: scaleX(0);
+      }
+      .hamburger.active .bar:nth-child(3) {
+        transform: translateY(-8px) rotate(-45deg);
+      }
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 32px 24px;
+    }
+
+    .page-title {
+      font-size: 2.6rem;
+      color: #725AC1;
+      margin: 12px 0 28px 0;
+      padding-bottom: 14px;
+      border-bottom: 4px solid #8D86C9;
+      display: inline-block;
+      letter-spacing: -0.5px;
+      animation: fadeSlide 0.8s ease forwards;
+    }
+    .page-title::before {
+      content: '📖 ';
+      font-size: 2.2rem;
+    }
+
+    @keyframes fadeSlide {
+      0% { opacity: 0; transform: translateY(18px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+
+    .chapters-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+      margin-top: 16px;
+    }
+
+    .chapter-card {
+      background: rgba(255, 238, 221, 0.6);
+      backdrop-filter: blur(8px);
+      border-radius: 36px;
+      padding: 24px 30px 28px;
+      border: 1px solid rgba(202, 196, 206, 0.3);
+      box-shadow: 0 8px 28px rgba(141, 134, 201, 0.06);
+      transition: 0.3s ease;
+      animation: cardEntry 0.7s ease forwards;
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    .chapter-card:nth-child(1) { animation-delay: 0.05s; }
+    .chapter-card:nth-child(2) { animation-delay: 0.12s; }
+    .chapter-card:nth-child(3) { animation-delay: 0.19s; }
+    .chapter-card:nth-child(4) { animation-delay: 0.26s; }
+    .chapter-card:nth-child(5) { animation-delay: 0.33s; }
+    .chapter-card:nth-child(6) { animation-delay: 0.40s; }
+    .chapter-card:nth-child(7) { animation-delay: 0.47s; }
+    .chapter-card:nth-child(8) { animation-delay: 0.54s; }
+    .chapter-card:nth-child(9) { animation-delay: 0.61s; }
+    .chapter-card:nth-child(10) { animation-delay: 0.68s; }
+
+    @keyframes cardEntry {
+      0% { opacity: 0; transform: translateY(28px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+
+    .chapter-card:hover {
+      transform: translateY(-6px) scale(1.003);
+      background: rgba(255, 238, 221, 0.85);
+      border-color: #CAC4CE;
+      box-shadow: 0 16px 44px rgba(114, 90, 193, 0.08);
+    }
+
+    .chapter-header {
+      display: flex;
+      align-items: baseline;
+      flex-wrap: wrap;
+      gap: 12px 20px;
+      margin-bottom: 12px;
+      cursor: default;
+    }
+    .chapter-nr {
+      font-size: 1.8rem;
+      font-weight: 600;
+      color: #8D86C9;
+      opacity: 0.7;
+      letter-spacing: -0.5px;
+      background: rgba(202, 196, 206, 0.2);
+      padding: 2px 14px;
+      border-radius: 60px;
+    }
+    .chapter-title-link {
+      font-size: 1.7rem;
+      font-weight: 600;
+      color: #725AC1;
+      letter-spacing: -0.3px;
+      background: transparent;
+      border: none;
+      text-decoration: none;
+      transition: 0.2s;
+      cursor: pointer;
+      display: inline-block;
+    }
+    .chapter-title-link:hover {
+      color: #8D86C9;
+      transform: translateX(4px);
+    }
+
+    .chapter-desc {
+      font-size: 0.98rem;
+      color: #4b4752;
+      margin: 4px 0 14px 0;
+      padding-left: 8px;
+      border-left: 3px solid #CAC4CE;
+      padding-left: 16px;
+    }
+
+    .sub-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 16px;
+      margin-top: 6px;
+      padding-left: 12px;
+    }
+    .sub-item {
+      background: rgba(247, 236, 225, 0.5);
+      backdrop-filter: blur(4px);
+      padding: 8px 20px;
+      border-radius: 60px;
+      border: 1px solid rgba(202, 196, 206, 0.25);
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: #3d3a42;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 2px 8px rgba(114, 90, 193, 0.02);
+      transition: 0.25s ease;
+      cursor: pointer;
+      position: relative;
+    }
+    .sub-item::before {
+      content: '▹';
+      color: #8D86C9;
+      font-size: 1.1rem;
+      transition: 0.25s;
+    }
+    .sub-item:hover {
+      background: #8D86C9;
+      color: #F7ECE1;
+      border-color: #725AC1;
+      transform: translateY(-3px) scale(1.03);
+      box-shadow: 0 8px 20px rgba(114, 90, 193, 0.15);
+    }
+    .sub-item:hover::before {
+      color: #FFEEDD;
+      transform: rotate(90deg);
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-top: 40px;
+      padding: 12px 28px;
+      background: #CAC4CE;
+      color: #2c2a2f;
+      border-radius: 60px;
+      text-decoration: none;
+      font-weight: 500;
+      box-shadow: 0 4px 12px rgba(114, 90, 193, 0.08);
+      transition: 0.3s;
+      border: 1px solid rgba(255, 238, 221, 0.3);
+    }
+    .back-link:hover {
+      background: #8D86C9;
+      color: #F7ECE1;
+      transform: translateX(-6px) scale(1.02);
+      box-shadow: 0 10px 28px rgba(114, 90, 193, 0.15);
+    }
+    .back-link::before {
+      content: '← ';
+      font-size: 1.2rem;
+    }
+
+    .sub-item:active {
+      transform: scale(0.94);
+      background: #725AC1;
+    }
+
+    /* Toast definition pop-up */
+    .definition-toast {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: #2c2a2f;
+      color: #F7ECE1;
+      padding: 16px 32px;
+      border-radius: 60px;
+      font-family: 'Inter', sans-serif;
+      font-weight: 500;
+      font-size: 1rem;
+      box-shadow: 0 20px 40px rgba(114, 90, 193, 0.35);
+      backdrop-filter: blur(12px);
+      background: rgba(44, 42, 47, 0.9);
+      border: 1px solid rgba(141, 134, 201, 0.5);
+      z-index: 9999;
+      opacity: 0;
+      transition: opacity 0.35s ease, transform 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+      letter-spacing: 0.3px;
+      max-width: 90vw;
+      text-align: center;
+      line-height: 1.4;
+    }
+    .definition-toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    @media (max-width: 600px) {
+      .navbar { padding: 0 18px; }
+      .nav-branding { font-size: 1.8rem; }
+      .container { padding: 20px 16px; }
+      .page-title { font-size: 2rem; }
+      .chapter-card { padding: 18px 18px 22px; }
+      .chapter-title-link { font-size: 1.3rem; }
+      .chapter-nr { font-size: 1.3rem; }
+      .sub-item { font-size: 0.85rem; padding: 6px 14px; }
+      .sub-list { gap: 8px 10px; }
+      .definition-toast {
+        padding: 14px 24px;
+        font-size: 0.9rem;
+        bottom: 24px;
+      }
+    }
+
+    a:focus-visible, .sub-item:focus-visible, .chapter-title-link:focus-visible {
+      outline: 3px solid #8D86C9;
+      outline-offset: 4px;
+      border-radius: 40px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <nav class="navbar">
+      <a href="index.html" class="nav-branding">C#</a>
+      <ul class="nav-menu">
+        <li class="nav-item"><a href="index.html" class="nav-link">Acasă</a></li>
+        <li class="nav-item"><a href="capitole.html" class="nav-link" style="border-bottom: 2px solid #FFEEDD;">Capitole</a></li>
+        <li class="nav-item"><a href="compilator.html" class="nav-link">Compilator</a></li>
+      </ul>
+      <div class="hamburger" aria-label="meniu" role="button" tabindex="0">
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <div class="container">
+      <h1 class="page-title">Toate capitolele C#</h1>
+
+      <div class="chapters-grid" id="chaptersGrid">
+        <!-- capitolele sunt generate din JavaScript -->
+      </div>
+
+      <a href="index.html" class="back-link">Înapoi la Acasă</a>
+    </div>
+  </main>
+
+  <script>
+    (function() {
+      // ----- Definirea capitolelor (titlurile coincid cu numele fișierelor HTML) -----
+      const chaptersData = [
+        {
+          nr: "01",
+          title: "Introducere în C# și .NET",
+          file: "1.html",
+          desc: "Bazele platformei, istoric, instalare și primul program „Hello World”.",
+          subchapters: [
+            { label: "Ce este .NET?", definition: "Platformă software gratuită, open-source, pentru construirea de aplicații moderne. Oferă runtime, biblioteci și compilatoare." },
+            { label: "Instalare SDK", definition: "Set de instrumente care include compilatorul C#, runtime-ul .NET și bibliotecile necesare pentru dezvoltare." },
+            { label: "Primul program", definition: "Creați o aplicație consolă simplă care afișează „Hello World!” pentru a verifica mediul de lucru." },
+            { label: "Structura soluției", definition: "Organizarea proiectelor C# în soluții, cu fișiere .csproj, foldere și dependențe." }
+          ]
+        },
+        {
+          nr: "02",
+          title: "Sintaxa de bază",
+          file: "2.html",
+          desc: "Variabile, tipuri de date, operatori, conversii și citirea de la tastatură.",
+          subchapters: [
+            { label: "Variabile și constante", definition: "Spații de memorie numite care stochează date; constantele (const) nu pot fi modificate după inițializare." },
+            { label: "Tipuri de date", definition: "int, double, char, string, bool – definesc natura valorilor și operațiile permise asupra lor." },
+            { label: "Operatori", definition: "Simboluri care efectuează operații: aritmetici (+, -), relaționali (==, <) și logici (&&, ||)." },
+            { label: "Conversii", definition: "Transformarea unei valori dintr-un tip în altul: implicită (fără pierderi) sau explicită (cast)." },
+            { label: "Citire / scriere", definition: "Console.ReadLine() și Console.WriteLine() pentru interacțiunea cu utilizatorul în consolă." }
+          ]
+        },
+        {
+          nr: "03",
+          title: "Instrucțiuni de control",
+          file: "3.html",
+          desc: "Decizii, bucle și salturi – fluxul execuției în C#.",
+          subchapters: [
+            { label: "if / else", definition: "Execută un bloc de cod doar dacă o condiție booleană este adevărată; else oferă o ramură alternativă." },
+            { label: "switch", definition: "Selectează o ramură de execuție pe baza valorii unei expresii, util pentru mai multe cazuri fixe." },
+            { label: "for / foreach", definition: "for: buclă cu contor; foreach: iterează prin fiecare element al unei colecții fără a folosi un index." },
+            { label: "while / do-while", definition: "while evaluează condiția înainte de fiecare iterație; do-while execută corpul cel puțin o dată." },
+            { label: "break / continue", definition: "break iese imediat din buclă; continue trece la următoarea iterație, sărind peste restul codului." }
+          ]
+        },
+        {
+          nr: "04",
+          title: "Metode și funcții",
+          file: "4.html",
+          desc: "Declarare, parametri, return, supraîncărcare și metode statice.",
+          subchapters: [
+            { label: "Declarare metode", definition: "Bloc de cod cu un nume, care poate fi apelat; definit cu tip returnat, nume și parametri opționali." },
+            { label: "Parametri", definition: "Valori transmise metodei la apel; pot fi by value, reference (ref) sau de ieșire (out)." },
+            { label: "Return", definition: "Instrucțiunea care trimite o valoare înapoi către apelant și încheie execuția metodei." },
+            { label: "Overloading", definition: "Mai multe metode cu același nume dar parametri diferiți (număr, tip sau ordine)." },
+            { label: "Metode statice", definition: "Metode care aparțin clasei, nu unei instanțe; se apelează cu numele clasei (ex: Math.Sqrt)." }
+          ]
+        },
+        {
+          nr: "05",
+          title: "OOP – clase și obiecte",
+          file: "5.html",
+          desc: "Fundamentele programării orientate pe obiecte în C#.",
+          subchapters: [
+            { label: "Clase și obiecte", definition: "Clasa este un șablon; obiectul este o instanță a clasei, cu stare și comportament propriu." },
+            { label: "Câmpuri și proprietăți", definition: "Câmpurile stochează date; proprietățile (get/set) oferă acces controlat la aceste date." },
+            { label: "Constructori", definition: "Metode speciale apelate la crearea unui obiect, utilizate pentru inițializarea membrilor." },
+            { label: "this / static", definition: "this se referă la instanța curentă; static indică un membru care aparține clasei, nu unei instanțe." },
+            { label: "Destructori", definition: "Metodă numită ~ClassName(), apelată automat de garbage collector pentru curățenie (rar folosită)." }
+          ]
+        },
+        {
+          nr: "06",
+          title: "Moștenire și polimorfism",
+          file: "6.html",
+          desc: "Extinderea claselor, suprascrierea metodelor și interfețe.",
+          subchapters: [
+            { label: "Moștenire", definition: "O clasă derivată preia membrii unei clase de bază, permițând reutilizarea și extinderea codului." },
+            { label: "base / override", definition: "base accesează membrii clasei părinte; override modifică o metodă virtuală în clasa derivată." },
+            { label: "Polimorfism", definition: "Capacitatea unui obiect de a lua mai multe forme, prin metode virtuale și referințe de tipul de bază." },
+            { label: "Clase abstracte", definition: "Clase care nu pot fi instanțiate direct; pot conține metode abstracte fără implementare." },
+            { label: "Interfețe", definition: "Contracte care definesc semnături de metode și proprietăți; o clasă poate implementa mai multe interfețe." }
+          ]
+        },
+        {
+          nr: "07",
+          title: "Colecții și generice",
+          file: "7.html",
+          desc: "Liste, dicționare, cozi, stive și tipuri generice.",
+          subchapters: [
+            { label: "List<T>", definition: "Colecție dinamică, indexată, care permite adăugarea, eliminarea și căutarea rapidă a elementelor." },
+            { label: "Dictionary<TKey,TValue>", definition: "Colecție de perechi cheie-valoare, cu acces rapid la valori pe baza unei chei unice." },
+            { label: "Queue / Stack", definition: "Queue: primul intrat, primul ieșit (FIFO); Stack: ultimul intrat, primul ieșit (LIFO)." },
+            { label: "Generice", definition: "Mecanism care permite definirea de clase/metode cu tipuri parametrizate, asigurând siguranța tipurilor." },
+            { label: "IEnumerable", definition: "Interfață de bază pentru iterație; permite parcurgerea unei colecții cu foreach." }
+          ]
+        },
+        {
+          nr: "08",
+          title: "Gestionarea excepțiilor",
+          file: "8.html",
+          desc: "Try-catch-finally, aruncarea și capturarea erorilor.",
+          subchapters: [
+            { label: "try / catch", definition: "try înconjoară codul care poate arunca o excepție; catch prinde și tratează eroarea specifică." },
+            { label: "finally", definition: "Bloc opțional care se execută întotdeauna, indiferent dacă a apărut sau nu o excepție." },
+            { label: "throw", definition: "Aruncă o excepție (predefinită sau personalizată) pentru a semnala o condiție de eroare." },
+            { label: "Excepții personalizate", definition: "Clase derivate din Exception, create pentru a reprezenta erori specifice aplicației." }
+          ]
+        },
+        {
+          nr: "09",
+          title: "LINQ și expresii lambda",
+          file: "9.html",
+          desc: "Interogarea datelor, filtrări, proiecții și funcții anonime.",
+          subchapters: [
+            { label: "Sintaxa LINQ", definition: "Language Integrated Query – interogări asemănătoare SQL direct în C#, pe colecții sau baze de date." },
+            { label: "Where / Select", definition: "Where filtrează elementele pe baza unei condiții; Select proiectează fiecare element într-o formă nouă." },
+            { label: "OrderBy / GroupBy", definition: "OrderBy sortează elementele; GroupBy le grupează după o cheie comună." },
+            { label: "Lambda expressions", definition: "Funcții anonime concise (ex: x => x > 5) folosite intens în LINQ și delegate." },
+            { label: "Deferred execution", definition: "Interogările LINQ nu se execută până când nu sunt iterale efectiv (ex: cu ToList() sau foreach)." }
+          ]
+        },
+        {
+          nr: "10",
+          title: "Programare asincronă",
+          file: "10.html",
+          desc: "async / await, Task, paralelism și operații I/O.",
+          subchapters: [
+            { label: "async / await", definition: "async marchează o metodă asincronă; await suspendă execuția până la finalizarea unui Task, fără a bloca thread-ul." },
+            { label: "Task & Task<T>", definition: "Task reprezintă o operație asincronă fără rezultat; Task<T> returnează o valoare la finalizare." },
+            { label: "Parallel.For", definition: "Execută iterațiile unei bucle în paralel, pe mai multe thread-uri, pentru operații independente." },
+            { label: "CancelationToken", definition: "Mecanism de anulare cooperativă a unei sarcini asincrone, folosind CancellationTokenSource." }
+          ]
+        }
+      ];
+
+      const chaptersGrid = document.getElementById('chaptersGrid');
+      
+      function buildChapters() {
+        chaptersGrid.innerHTML = '';
+        chaptersData.forEach(chapter => {
+          const card = document.createElement('div');
+          card.className = 'chapter-card';
+          
+          let subHtml = '';
+          chapter.subchapters.forEach(sub => {
+            subHtml += `<a href="#" class="sub-item" data-definition="${escapeHtml(sub.definition)}">${escapeHtml(sub.label)}</a>`;
+          });
+          
+          // Titlul capitolului este un link către fișierul din folderul capitole/
+          card.innerHTML = `
+            <div class="chapter-header">
+              <span class="chapter-nr">${escapeHtml(chapter.nr)}</span>
+              <a href="capitole/${escapeHtml(chapter.file)}" class="chapter-title-link">${escapeHtml(chapter.title)}</a>
+            </div>
+            <div class="chapter-desc">${escapeHtml(chapter.desc)}</div>
+            <div class="sub-list">
+              ${subHtml}
+            </div>
+          `;
+          chaptersGrid.appendChild(card);
+        });
+      }
+      
+      function escapeHtml(text) {
+        return String(text)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#039;');
+      }
+
+      // Toast pentru definiția subcapitolelor
+      function showDefinitionToast(definitionText, subLabel) {
+        const oldToast = document.querySelector('.definition-toast');
+        if (oldToast) oldToast.remove();
+
+        const toast = document.createElement('div');
+        toast.className = 'definition-toast';
+        toast.textContent = `📘 ${subLabel}: ${definitionText}`;
+        document.body.appendChild(toast);
+        
+        requestAnimationFrame(() => {
+          toast.classList.add('show');
+        });
+        
+        setTimeout(() => {
+          toast.classList.remove('show');
+          setTimeout(() => {
+            if (toast.parentNode) toast.remove();
+          }, 400);
+        }, 3200);
+      }
+
+      function attachSubItemEvents() {
+        const subItems = document.querySelectorAll('.sub-item');
+        subItems.forEach(item => {
+          item.addEventListener('click', function(e) {
+            e.preventDefault();
+            const definition = this.getAttribute('data-definition');
+            const label = this.textContent.trim();
+            
+            // Mică animație tactilă
+            this.style.transition = '0.15s';
+            this.style.transform = 'scale(0.92)';
+            setTimeout(() => {
+              this.style.transform = 'scale(1.03)';
+            }, 100);
+            setTimeout(() => {
+              this.style.transform = 'scale(1)';
+            }, 250);
+
+            if (definition) {
+              showDefinitionToast(definition, label);
+            } else {
+              showDefinitionToast('Definiția va fi disponibilă în curând.', label);
+            }
+          });
+        });
+      }
+
+      // Hamburger menu
+      const hamburger = document.querySelector('.hamburger');
+      const navMenu = document.querySelector('.nav-menu');
+
+      function toggleMenu() {
+        hamburger.classList.toggle('active');
+        navMenu.classList.toggle('active');
+      }
+
+      hamburger.addEventListener('click', toggleMenu);
+      document.querySelectorAll('.nav-link').forEach(link => {
+        link.addEventListener('click', () => {
+          if (navMenu.classList.contains('active')) {
+            hamburger.classList.remove('active');
+            navMenu.classList.remove('active');
+          }
+        });
+      });
+
+      document.addEventListener('click', (e) => {
+        const isMenuOpen = navMenu.classList.contains('active');
+        if (isMenuOpen && !e.target.closest('nav') && !e.target.closest('.hamburger')) {
+          hamburger.classList.remove('active');
+          navMenu.classList.remove('active');
+        }
+      });
+
+      hamburger.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          toggleMenu();
+        }
+      });
+
+      // Construim capitolele și atașăm evenimentele
+      buildChapters();
+      attachSubItemEvents();
+    })();
+  </script>
+</body>
+</html>
